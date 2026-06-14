@@ -1,0 +1,34 @@
+# ── Secrets (NEVER push these) ──────────────────────────────
+**/.env
+*.env
+**/firebase-credentials.json
+firebase-credentials.json
+get-token.html
+
+# ── Python ───────────────────────────────────────────────────
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/venv/
+**/.venv/
+
+# ── Node / React ─────────────────────────────────────────────
+**/node_modules/
+**/dist/
+
+# ── Java leftovers ───────────────────────────────────────────
+**/target/
+**/*.class
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+
+# ── IDE ──────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+
+# ── Misc ─────────────────────────────────────────────────────
+*.log
+errors.txt
+cd
