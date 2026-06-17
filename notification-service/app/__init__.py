@@ -34,4 +34,13 @@ def create_app():
     from app.routes.notification_routes import notification_bp
     app.register_blueprint(notification_bp)
 
+    # ── Kafka Consumer ────────────────────────────────────────────────────────
+    from app.kafka.consumer import start_kafka_consumer
+    from app.models.models import Notification
+    start_kafka_consumer(
+        app, db, Notification,
+        os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092'),
+        os.environ.get('KAFKA_GROUP_ID', 'notification-group')
+    )
+
     return app
