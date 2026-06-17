@@ -150,7 +150,7 @@ The system follows a **Database-per-Service Architecture** to ensure scalability
 
 💻 Python Full Stack Developer
 
-⚡ Microservices • Flask • React • PostgreSQL • Kafka • Firebase
+⚡Python • Microservices • Flask • React • PostgreSQL • Kafka • Firebase
 
 ---
 
