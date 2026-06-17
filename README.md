@@ -108,6 +108,8 @@ The system follows a **Database-per-Service Architecture** to ensure scalability
 
 ✅ Microservices Architecture
 
+✅ Python Based Algorith
+
 ✅ Event-Driven Communication
 
 ✅ REST API Development
