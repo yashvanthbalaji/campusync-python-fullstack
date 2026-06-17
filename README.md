@@ -39,9 +39,9 @@ The platform digitizes and streamlines campus operations through secure authenti
 
 Dedicated dashboards for:
 
-* 🎓 **Student**
-* 🛠️ **Worker**
-* 👨‍💼 **Admin**
+* 🎓 **Student - ( specific feature & access )**
+* 🛠️ **Worker - ( specific feature & access )**
+* 👨‍💼 **Admin - ( full access & control)**
 
 ### 🤖 AI-Powered Lost & Found
 
