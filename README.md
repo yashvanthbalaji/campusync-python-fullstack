@@ -4,7 +4,7 @@
 
 <img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=700&size=28&pause=1000&color=36BCF7&center=true&vCenter=true&width=700&lines=Campus+%26+Hostel+Management+Platform;Python+Full+Stack+Microservices+Application;AI-Powered+Lost+%26+Found+System;Kafka+Driven+Event+Architecture" alt="Typing SVG" />
 
-### 🚀 A Full-Stack Microservices Application built with Python, React, PostgreSQL, Firebase & Kafka
+### 🚀 A Full-Stack Microservices Application built with Python, Flask, React, PostgreSQL, Firebase & Kafka
 
 <p>
   <img src="https://img.shields.io/badge/Python-Flask-blue?logo=python&logoColor=white">
