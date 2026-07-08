@@ -30,7 +30,7 @@ export default function ProfileSetup() {
 
   // ── Student state ──
   const [studentName, setStudentName] = useState(localStorage.getItem('userName') || '');
-  const [studentType, setStudentType] = useState(localStorage.getItem('studentType') || 'HOSTEL');
+  const [studentType, setStudentType] = useState(localStorage.getItem('studentType') || 'COLLEGE');
   const [year, setYear] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
 
@@ -53,10 +53,17 @@ export default function ProfileSetup() {
   const handleStudentSubmit = async () => {
     setError('');
     if (!studentName.trim()) { setError('Please enter your full name'); return; }
-    if (!year) { setError('Please select your year of study'); return; }
-    if (!roomNumber || roomNumber.length !== 3 || isNaN(roomNumber)) {
-      setError('Room number must be exactly 3 digits'); return;
+    
+    if (studentType === 'HOSTEL') {
+      if (!year) { setError('Please select your year of study'); return; }
+      if (!roomNumber || roomNumber.length !== 3 || isNaN(roomNumber)) {
+        setError('Room number must be exactly 3 digits'); return;
+      }
     }
+
+    const savedYear = studentType === 'HOSTEL' ? year : '';
+    const savedRoomNumber = studentType === 'HOSTEL' ? roomNumber : '';
+
     // Save ALL profile fields to backend permanently
     try {
       const token = localStorage.getItem('token');
@@ -64,18 +71,18 @@ export default function ProfileSetup() {
         {
           name: studentName.trim(),
           phoneNumber: localStorage.getItem('userPhone') || '',
-          roomNumber: roomNumber,
-          year: year,
+          roomNumber: savedRoomNumber,
+          year: savedYear,
           studentType: studentType
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (e) { console.error('Profile save failed (non-fatal):', e); }
     localStorage.setItem('userName', studentName.trim());
-    localStorage.setItem('userRoom', roomNumber);
-    localStorage.setItem('userYear', year);
+    localStorage.setItem('userRoom', savedRoomNumber);
+    localStorage.setItem('userYear', savedYear);
     localStorage.setItem('studentType', studentType);
-    saveProfile(year, roomNumber);
+    saveProfile(savedYear, savedRoomNumber);
     localStorage.setItem('profileComplete', 'true');
     navigate('/dashboard');
   };
@@ -306,7 +313,7 @@ export default function ProfileSetup() {
                     transition: 'all 0.25s ease',
                   }}
                 >
-                  🎓 College Student
+                  🎓 Day Scholar
                   <p style={{ fontSize: 11, margin: '4px 0 0', color: 'var(--text-secondary)', fontWeight: 400 }}>
                     Lost &amp; Found only
                   </p>
@@ -321,38 +328,43 @@ export default function ProfileSetup() {
               placeholder="Enter your full name"
               value={studentName}
               onChange={e => setStudentName(e.target.value)}
-              onFocus={focusHandler} onBlur={blurHandler}
-            />
-
-            <label style={s.label}>🎓 Year of Study</label>
-            <select
-              style={s.select}
-              value={year}
-              onChange={e => setYear(e.target.value)}
-              onFocus={focusHandler} onBlur={blurHandler}
-            >
-              <option value="" disabled>Select your year</option>
-              <option value="1">🎓 1st Year</option>
-              <option value="2">🎓 2nd Year</option>
-              <option value="3">🎓 3rd Year</option>
-              <option value="4">🎓 4th Year</option>
-            </select>
-
-            <label style={s.label}>🏠 Room Number</label>
-            <input
-              style={s.input}
-              type="text"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="e.g. 108 or 207"
-              value={roomNumber}
-              onChange={e => {
-                const v = e.target.value.replace(/\D/g, '');
-                if (v.length <= 3) setRoomNumber(v);
-              }}
               onKeyDown={e => e.key === 'Enter' && handleStudentSubmit()}
               onFocus={focusHandler} onBlur={blurHandler}
             />
+
+            {studentType === 'HOSTEL' && (
+              <>
+                <label style={s.label}>🎓 Year of Study</label>
+                <select
+                  style={s.select}
+                  value={year}
+                  onChange={e => setYear(e.target.value)}
+                  onFocus={focusHandler} onBlur={blurHandler}
+                >
+                  <option value="" disabled>Select your year</option>
+                  <option value="1">🎓 1st Year</option>
+                  <option value="2">🎓 2nd Year</option>
+                  <option value="3">🎓 3rd Year</option>
+                  <option value="4">🎓 4th Year</option>
+                </select>
+
+                <label style={s.label}>🏠 Room Number</label>
+                <input
+                  style={s.input}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={3}
+                  placeholder="e.g. 108 or 207"
+                  value={roomNumber}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '');
+                    if (v.length <= 3) setRoomNumber(v);
+                  }}
+                  onKeyDown={e => e.key === 'Enter' && handleStudentSubmit()}
+                  onFocus={focusHandler} onBlur={blurHandler}
+                />
+              </>
+            )}
 
             <button
               style={s.submitBtn}

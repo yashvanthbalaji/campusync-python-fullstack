@@ -41,11 +41,12 @@ const FLOOR_OPTIONS = [
 ];
 
 export default function LostFound() {
-  const { roomNumber, email: currentUserEmail } = useAuth();
+  const { roomNumber, email: currentUserEmail, studentType } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [items, setItems]       = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter]     = useState('ALL');
+  const [campusFilter, setCampusFilter] = useState('ALL');
   const [form, setForm]         = useState({
     itemName:'', description:'', type:'LOST',
     priority:'MEDIUM', locationCategory:'WASHING_AREA', locationFloor:'GROUND',
@@ -99,7 +100,11 @@ export default function LostFound() {
         setTimeout(() => fetchItems(), 1000);
         return;
       }
-      const r = await axios.get(`${API_BASE}/all`, { headers });
+      let url = `${API_BASE}/all`;
+      if (studentType === 'HOSTEL' && campusFilter !== 'ALL') {
+        url += `?campus=${campusFilter}`;
+      }
+      const r = await axios.get(url, { headers });
       const sorted = [...r.data].sort((a,b) =>
         (PRIORITY_CONFIG[a.priority]?.order||99) - (PRIORITY_CONFIG[b.priority]?.order||99));
       setItems(sorted);
@@ -108,7 +113,7 @@ export default function LostFound() {
     } finally {
       setFetching(false);
     }
-  }, []);
+  }, [studentType, campusFilter]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
 
@@ -176,10 +181,11 @@ export default function LostFound() {
     setSearching(true);
     setSearchDone(false);
     try {
-      const res = await axios.get(
-        `${API_BASE}/search?query=${encodeURIComponent(searchTerm.trim())}`,
-        { headers: await getAuthHeaders() }
-      );
+      let searchUrl = `${API_BASE}/search?query=${encodeURIComponent(searchTerm.trim())}`;
+      if (studentType === 'HOSTEL' && campusFilter !== 'ALL') {
+        searchUrl += `&campus=${campusFilter}`;
+      }
+      const res = await axios.get(searchUrl, { headers: await getAuthHeaders() });
       setSearchResults(res.data || []);
     } catch {
       setSearchResults([]);
@@ -317,6 +323,40 @@ export default function LostFound() {
             display:'flex', alignItems:'center', backdropFilter:'blur(8px)',
           }}>{isDark ? '☀️' : '🌙'}</button>
         </div>
+
+        {/* Campus Filter Tab Bar for Hostel Students */}
+        {studentType === 'HOSTEL' && (
+          <div style={{
+            display: 'flex', gap: 8, marginBottom: 16,
+            background: 'rgba(255,255,255,0.03)', padding: '5px',
+            borderRadius: 16, border: '1px solid var(--glass-border)'
+          }}>
+            {[
+              { key: 'ALL', label: 'Both 🏫🏠' },
+              { key: 'HOSTEL', label: 'Hostel 🏠' },
+              { key: 'COLLEGE', label: 'College 🏫' }
+            ].map(t => {
+              const active = campusFilter === t.key;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => setCampusFilter(t.key)}
+                  style={{
+                    flex: 1, padding: '10px 8px', borderRadius: 12, cursor: 'pointer',
+                    fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: active ? 700 : 600,
+                    fontSize: '0.8rem', transition: 'all 0.25s',
+                    border: 'none',
+                    background: active ? 'linear-gradient(135deg, #3B82F6, #60A5FA)' : 'transparent',
+                    color: active ? 'white' : 'var(--text-muted)',
+                    boxShadow: active ? '0 4px 12px rgba(59,130,246,0.3)' : 'none',
+                  }}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Filter tabs */}
         <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>

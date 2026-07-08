@@ -58,13 +58,13 @@ def report_item(reporter_email, form_data, image_path):
             user_info = resp.json()
             item.reporter_name = user_info.get('name')
             item.reporter_phone = user_info.get('phoneNumber')
-            item.student_type = user_info.get('studentType') or 'HOSTEL'
+            item.student_type = user_info.get('studentType') or 'COLLEGE'
             db.session.commit()
             log.info("👤 Reporter info fetched: name='%s' phone='%s' studentType='%s'",
                      user_info.get('name'), user_info.get('phoneNumber'),
                      item.student_type)
     except Exception as e:
-        item.student_type = 'HOSTEL'
+        item.student_type = 'COLLEGE'
         db.session.commit()
         log.warning("⚠️ Could not fetch reporter info (non-fatal): %s", e)
 
@@ -182,24 +182,32 @@ def confirm_resolved(item_id):
 #  Query methods
 # ──────────────────────────────────────────────────────────────
 
-def get_all_items(viewer_student_type=None):
+def get_all_items(viewer_student_type=None, campus_filter=None):
     """Returns all items sorted by priority (HIGH first), then by created_at desc.
-    If viewer_student_type is provided, filters to only that type."""
+    - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is set to 'HOSTEL' or 'COLLEGE', filters accordingly.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is None, returns all items."""
     query = LostFoundItem.query
-    if viewer_student_type:
-        query = query.filter_by(student_type=viewer_student_type)
+    if viewer_student_type == 'COLLEGE':
+        query = query.filter(LostFoundItem.student_type == 'COLLEGE')
+    elif viewer_student_type == 'HOSTEL' and campus_filter in ('HOSTEL', 'COLLEGE'):
+        query = query.filter(LostFoundItem.student_type == campus_filter)
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()
     ).all()
 
 
-def get_by_type(item_type, viewer_student_type=None):
+def get_by_type(item_type, viewer_student_type=None, campus_filter=None):
     """Returns items of a given type, sorted by priority then created_at desc.
-    If viewer_student_type is provided, filters to only that type."""
+    - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is set to 'HOSTEL' or 'COLLEGE', filters accordingly.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is None, returns all items."""
     query = LostFoundItem.query.filter_by(type=item_type)
-    if viewer_student_type:
-        query = query.filter_by(student_type=viewer_student_type)
+    if viewer_student_type == 'COLLEGE':
+        query = query.filter(LostFoundItem.student_type == 'COLLEGE')
+    elif viewer_student_type == 'HOSTEL' and campus_filter in ('HOSTEL', 'COLLEGE'):
+        query = query.filter(LostFoundItem.student_type == campus_filter)
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()

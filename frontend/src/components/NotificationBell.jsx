@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
+import { auth } from '../firebase';
 
 export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
@@ -9,26 +10,30 @@ export default function NotificationBell() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  const token = localStorage.getItem('token');
-  const email = localStorage.getItem('userEmail');
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'X-User-Email': email,
+  const getAuthHeaders = async () => {
+    const currentUser = auth.currentUser;
+    const token = currentUser ? await currentUser.getIdToken() : null;
+    const email = currentUser ? currentUser.email : null;
+    return {
+      Authorization: `Bearer ${token}`,
+      'X-User-Email': email,
+    };
   };
 
   // ── Fetch unread count every 30s ──
   const fetchCount = useCallback(async () => {
     try {
-      if (!email || !token) return;
+      if (!auth.currentUser) return;
+      const headers = await getAuthHeaders();
       const res = await axios.get(
-        'http://localhost:8080/api/notifications/unread-count',
+        'http://localhost:8084/api/notifications/unread-count',
         { headers }
       );
       setUnreadCount(res.data?.count || 0);
     } catch {
       // silently fail — notification service might be down
     }
-  }, [email, token]);
+  }, []);
 
   useEffect(() => {
     fetchCount();
@@ -54,8 +59,9 @@ export default function NotificationBell() {
       return;
     }
     try {
+      const headers = await getAuthHeaders();
       const res = await axios.get(
-        'http://localhost:8080/api/notifications/my',
+        'http://localhost:8084/api/notifications/my',
         { headers }
       );
       setNotifications(res.data || []);
@@ -69,8 +75,9 @@ export default function NotificationBell() {
   // ── Mark single notification as read ──
   const markAsRead = async (id) => {
     try {
+      const headers = await getAuthHeaders();
       await axios.put(
-        `http://localhost:8080/api/notifications/mark-read/${id}`,
+        `http://localhost:8084/api/notifications/mark-read/${id}`,
         {},
         { headers }
       );
@@ -86,8 +93,9 @@ export default function NotificationBell() {
   // ── Mark all as read ──
   const markAllRead = async () => {
     try {
+      const headers = await getAuthHeaders();
       await axios.put(
-        'http://localhost:8080/api/notifications/mark-all-read',
+        'http://localhost:8084/api/notifications/mark-all-read',
         {},
         { headers }
       );

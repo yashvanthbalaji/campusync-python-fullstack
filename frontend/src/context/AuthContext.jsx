@@ -1,6 +1,6 @@
 // ===== src/context/AuthContext.jsx =====
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -8,7 +8,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { auth as firebaseAuth } from '../firebase';
-import api from '../api/axiosConfig';
+import api, { setCachedToken } from '../api/axiosConfig';
 
 const AuthContext = createContext(null);
 
@@ -24,12 +24,23 @@ export function AuthProvider({ children }) {
     loading: true,
   });
 
+  // Flag to skip the onAuthStateChanged sync-profile call when
+  // login() or register() already handled it.
+  const skipNextAuthChange = useRef(false);
+
   // ── Restore session on page refresh via onAuthStateChanged ──
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+      // If login/register already synced, skip this duplicate call
+      if (skipNextAuthChange.current) {
+        skipNextAuthChange.current = false;
+        return;
+      }
+
       if (user) {
         try {
           const token = await user.getIdToken();
+          setCachedToken(token);
           // Sync profile with backend to get role/profile data
           const res = await api.post('/api/users/sync-profile');
           const profile = res.data;
@@ -92,7 +103,14 @@ export function AuthProvider({ children }) {
     const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
     const token = await userCredential.user.getIdToken();
 
-    // Sync profile with backend (interceptor auto-attaches token)
+    // Cache the token so the interceptor can use it immediately
+    setCachedToken(token);
+    localStorage.setItem('token', token);
+
+    // Prevent onAuthStateChanged from making a duplicate sync-profile call
+    skipNextAuthChange.current = true;
+
+    // Sync profile with backend
     const res = await api.post('/api/users/sync-profile');
     const profile = res.data;
 
@@ -107,7 +125,6 @@ export function AuthProvider({ children }) {
       loading: false,
     };
 
-    localStorage.setItem('token', token);
     localStorage.setItem('userEmail', state.email);
     localStorage.setItem('userRole', state.role);
     localStorage.setItem('userName', state.name);
@@ -125,7 +142,14 @@ export function AuthProvider({ children }) {
     const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
     const token = await userCredential.user.getIdToken();
 
-    // Sync profile with backend (interceptor auto-attaches token)
+    // Cache the token so the interceptor can use it immediately
+    setCachedToken(token);
+    localStorage.setItem('token', token);
+
+    // Prevent onAuthStateChanged from making a duplicate sync-profile call
+    skipNextAuthChange.current = true;
+
+    // Sync profile with backend
     const res = await api.post('/api/users/sync-profile');
     const profile = res.data;
 
@@ -140,7 +164,6 @@ export function AuthProvider({ children }) {
       loading: false,
     };
 
-    localStorage.setItem('token', token);
     localStorage.setItem('userEmail', state.email);
     localStorage.setItem('userRole', state.role);
     localStorage.setItem('userName', state.name);
@@ -156,6 +179,7 @@ export function AuthProvider({ children }) {
   // ── Logout ──
   const logout = async () => {
     await signOut(firebaseAuth);
+    setCachedToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userEmail');
