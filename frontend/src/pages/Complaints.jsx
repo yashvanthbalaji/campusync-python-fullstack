@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { auth } from '../firebase';
 
-const API = 'http://localhost:8082';
+const API = '';
 const CAT_COLOR = {
   ELECTRICAL:'#F97316', PLUMBING:'#3B82F6', CLEANING:'#00D4FF',
   AC_REPAIR:'#06B6D4', CARPENTRY:'#D97706', PAINTING:'#8B5CF6',
@@ -344,7 +344,7 @@ export default function Complaints() {
                           {/* Image */}
                           {c.imagePath && (
                             <div style={{ width:'100%', height:180, borderRadius:10, overflow:'hidden', background:'#1a1a2e', marginBottom:10 }}>
-                              <img src={`http://localhost:8082/api/complaints/images/${c.imagePath}`} alt="proof"
+                              <img src={`/api/complaints/images/${c.imagePath}`} alt="proof"
                                 onError={e=>{e.target.onerror=null;e.target.parentElement.style.display='none';}}
                                 style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} />
                             </div>

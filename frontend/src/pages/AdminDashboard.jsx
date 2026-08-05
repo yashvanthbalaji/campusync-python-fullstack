@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import axios from 'axios';
 
-const API = 'http://localhost:8080';
+const API = '';
 
 // ── Category colors ──
 const CAT_COLOR = {
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
     try {
       console.log('🛡️ Admin fetching data with token:', authToken?.substring(0, 20) + '...');
       const [usersRes, complaintsRes] = await Promise.all([
-        axios.get(`${API}/api/auth/users`, { headers }).catch(err => {
+        axios.get(`${API}/api/users/users`, { headers }).catch(err => {
           console.error('❌ Users fetch failed:', err.response?.status, err.response?.data);
           return { data: [] };
         }),
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
   // ── Role change ──
   const handleRoleChange = async (email, newRole) => {
     try {
-      await axios.put(`${API}/api/auth/assign-role`, { email, role: newRole }, { headers });
+      await axios.put(`${API}/api/users/assign-role`, { email, role: newRole }, { headers });
       showToast(`✅ ${email} is now ${newRole}`);
       fetchData();
     } catch (e) {

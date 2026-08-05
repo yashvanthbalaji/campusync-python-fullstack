@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import axios from 'axios';
 
-const API = 'http://localhost:8080';
+const API = '';
 
 // ── Category colors ──
 const CAT_COLOR = {

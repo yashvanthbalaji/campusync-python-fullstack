@@ -163,8 +163,8 @@ export default function Dashboard() {
   useEffect(() => {
     const headers = { Authorization: `Bearer ${token}` };
     Promise.allSettled([
-      axios.get('http://localhost:8080/api/complaints/my', { headers }),
-      axios.get('http://localhost:8080/api/lost-found/all', { headers }),
+      axios.get('/api/complaints/my', { headers }),
+      axios.get('/api/lost-found/all', { headers }),
     ]).then(([c, l]) => {
       if (c.status === 'fulfilled') setComplaints(c.value.data?.length ?? 0);
       if (l.status === 'fulfilled') setLostItems(l.value.data?.length ?? 0);

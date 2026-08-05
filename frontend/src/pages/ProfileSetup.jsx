@@ -67,7 +67,7 @@ export default function ProfileSetup() {
     // Save ALL profile fields to backend permanently
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:8080/api/auth/update-profile',
+      await axios.put('/api/users/update-profile',
         {
           name: studentName.trim(),
           phoneNumber: localStorage.getItem('userPhone') || '',
@@ -97,7 +97,7 @@ export default function ProfileSetup() {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        'http://localhost:8080/api/auth/worker-profile',
+        '/api/users/worker-profile',
         {
           name: workerName.trim(),
           phoneNumber: workerPhone.trim(),

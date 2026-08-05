@@ -83,7 +83,7 @@ export default function LostFound() {
   const [imagePreview, setImagePreview]   = useState(null);
   const fileInputRef = useRef(null);
 
-  const API_BASE = 'http://localhost:8083/api/lost-found';
+  const API_BASE = '/api/lost-found';
   const getAuthHeaders = async () => {
     const currentUser = auth.currentUser;
     const token = currentUser ? await currentUser.getIdToken() : null;
@@ -531,7 +531,7 @@ export default function LostFound() {
                     border:'1px solid rgba(255,255,255,0.06)',
                   }}>
                     <img
-                      src={`http://localhost:8083/api/lost-found/images/${item.imageUrl}`}
+                      src={`/api/lost-found/images/${item.imageUrl}`}
                       alt={item.itemName}
                       onClick={e => { e.stopPropagation(); handleCardClick(item); }}
                       onError={e => { e.target.onerror=null; e.target.parentElement.style.display='none'; }}
@@ -989,7 +989,7 @@ export default function LostFound() {
                 border:'1px solid rgba(255,255,255,0.08)',
               }}>
                 <img
-                  src={`http://localhost:8083/api/lost-found/images/${selectedItem.imageUrl}`}
+                   src={`/api/lost-found/images/${selectedItem.imageUrl}`}
                   alt={selectedItem.itemName}
                   onError={e => { e.target.onerror=null; e.target.parentElement.style.display='none'; }}
                   style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' }}

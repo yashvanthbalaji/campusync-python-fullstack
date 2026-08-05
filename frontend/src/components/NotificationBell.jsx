@@ -26,7 +26,7 @@ export default function NotificationBell() {
       if (!auth.currentUser) return;
       const headers = await getAuthHeaders();
       const res = await axios.get(
-        'http://localhost:8084/api/notifications/unread-count',
+        '/api/notifications/unread-count',
         { headers }
       );
       setUnreadCount(res.data?.count || 0);
@@ -61,7 +61,7 @@ export default function NotificationBell() {
     try {
       const headers = await getAuthHeaders();
       const res = await axios.get(
-        'http://localhost:8084/api/notifications/my',
+        '/api/notifications/my',
         { headers }
       );
       setNotifications(res.data || []);
@@ -77,7 +77,7 @@ export default function NotificationBell() {
     try {
       const headers = await getAuthHeaders();
       await axios.put(
-        `http://localhost:8084/api/notifications/mark-read/${id}`,
+        `/api/notifications/mark-read/${id}`,
         {},
         { headers }
       );
@@ -95,7 +95,7 @@ export default function NotificationBell() {
     try {
       const headers = await getAuthHeaders();
       await axios.put(
-        'http://localhost:8084/api/notifications/mark-all-read',
+        '/api/notifications/mark-all-read',
         {},
         { headers }
       );

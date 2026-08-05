@@ -29,7 +29,7 @@ export default function Register() {
     setLoading(true);
     try {
       const data = await register(email, password);
-      console.log('🔐 Registered + synced — role:', data.role);
+      console.log('🔐 Registered — role:', data?.role || 'pending sync');
 
       // Store phone number if provided
       if (phoneNumber) {
@@ -38,14 +38,18 @@ export default function Register() {
 
       setSuccess('Account created! Redirecting...');
       localStorage.setItem('profileComplete', 'false');
-      setTimeout(() => navigate('/profile-setup'), 1500);
+      // Always navigate to profile-setup — sync-profile may complete in the background
+      setTimeout(() => navigate('/profile-setup'), 1000);
     } catch (err) {
+      // Only show error if Firebase itself failed (e.g. email-already-in-use, weak-password)
+      // sync-profile errors are handled inside register() and are non-fatal
       const message = err.message || 'Registration failed. Try again.';
       setError(message);
     } finally {
       setLoading(false);
     }
   };
+
 
   const focusHandler = (e) => {
     e.target.style.borderColor = 'var(--accent-cyan)';

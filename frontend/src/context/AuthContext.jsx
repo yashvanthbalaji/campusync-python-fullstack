@@ -100,6 +100,7 @@ export function AuthProvider({ children }) {
 
   // ── Register (Firebase + sync-profile) ──
   const register = async (email, password) => {
+    // Step 1: Create Firebase user — if this throws, we bubble it up (e.g. email-already-in-use)
     const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
     const token = await userCredential.user.getIdToken();
 
@@ -110,9 +111,16 @@ export function AuthProvider({ children }) {
     // Prevent onAuthStateChanged from making a duplicate sync-profile call
     skipNextAuthChange.current = true;
 
-    // Sync profile with backend
-    const res = await api.post('/api/users/sync-profile');
-    const profile = res.data;
+    // Step 2: Sync profile — non-fatal. If it fails, onAuthStateChanged will retry.
+    let profile = {};
+    try {
+      const res = await api.post('/api/users/sync-profile');
+      profile = res.data;
+    } catch (syncErr) {
+      console.warn('⚠️ sync-profile failed after register (non-fatal, will retry on auth change):', syncErr?.response?.status, syncErr?.message);
+      // Allow onAuthStateChanged to handle it — reset the skip flag so it WILL fire
+      skipNextAuthChange.current = false;
+    }
 
     const state = {
       token,
