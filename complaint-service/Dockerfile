@@ -1,5 +1,7 @@
-FROM eclipse-temurin:17-alpine
+FROM python:3.11-slim
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 EXPOSE 8082
-ENTRYPOINT ["java","-jar","app.jar"]
+CMD ["python", "run_fast.py"]
