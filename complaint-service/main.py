@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.firebase_auth_fast import init_firebase
 from app.routes.complaint_routes_fast import router
+from app.database import engine
+from app.models.models import Base
 
 load_dotenv()
 
@@ -17,6 +19,7 @@ app.add_middleware(
 )
 
 init_firebase()
+Base.metadata.create_all(bind=engine)
 app.include_router(router)
 
 @app.get('/')

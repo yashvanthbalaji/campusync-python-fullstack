@@ -8,9 +8,11 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from app.database import SessionLocal
-    from app.models.models import Notification
+    from app.database import SessionLocal, engine
+    from app.models.models import Notification, Base
     from app.kafka.consumer_fast import start_kafka_consumer_fast
+
+    Base.metadata.create_all(bind=engine)
 
     start_kafka_consumer_fast(
         Notification=Notification,

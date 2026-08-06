@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from app.firebase_auth_fast import init_firebase
 from app.routes.user_routes_fast import router
 from app.database import engine
-from app.models.models import User
+from app.models.models import Base
 from sqlalchemy import inspect
 
 load_dotenv()
@@ -20,6 +20,7 @@ app.add_middleware(
 )
 
 init_firebase()
+Base.metadata.create_all(bind=engine)
 app.include_router(router)
 
 @app.get('/')
