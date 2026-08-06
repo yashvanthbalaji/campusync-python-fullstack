@@ -4,6 +4,7 @@ import base64
 import logging
 import requests
 
+from sqlalchemy import or_
 from app.models.models import LostFoundItem
 
 log = logging.getLogger(__name__)
@@ -215,7 +216,7 @@ def generate_tags_for_item(filename, item_name):
 #  AI Search — instant SQL search, NO Gemini calls
 # ══════════════════════════════════════════════════════════════
 
-def search_by_description(query):
+def search_by_description(query, db):
     """
     Search items using fast SQL text search on ai_tags + item_name.
     NO Gemini API calls — uses pre-generated tags stored in the DB.
@@ -228,8 +229,8 @@ def search_by_description(query):
     results = []
 
     # Full phrase first (exact matches appear at top)
-    phrase_matches = LostFoundItem.query.filter(
-        db.or_(
+    phrase_matches = db.query(LostFoundItem).filter(
+        or_(
             LostFoundItem.ai_tags.ilike(f'%{trimmed}%'),
             LostFoundItem.item_name.ilike(f'%{trimmed}%')
         )
@@ -246,8 +247,8 @@ def search_by_description(query):
         for word in words:
             if len(word) < 2:
                 continue  # skip single-char noise
-            word_matches = LostFoundItem.query.filter(
-                db.or_(
+            word_matches = db.query(LostFoundItem).filter(
+                or_(
                     LostFoundItem.ai_tags.ilike(f'%{word}%'),
                     LostFoundItem.item_name.ilike(f'%{word}%')
                 )
@@ -259,7 +260,3 @@ def search_by_description(query):
 
     log.info("[GeminiSearch] Found %d items for query='%s'", len(results), trimmed)
     return results
-
-
-# Need db.or_ for search_by_description
-from app.extensions import db

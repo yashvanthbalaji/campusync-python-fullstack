@@ -36,8 +36,8 @@ def handle_complaint_event(message, db, Notification):
                 message=f"Your complaint '{title}' has been resolved by {worker_email}.",
                 type='COMPLAINT_RESOLVED'
             )
-            db.session.add(n)
-            db.session.commit()
+            db.add(n)
+            db.commit()
             log.info('RESOLVED notification saved for: %s', student_email)
 
         elif 'NEW_COMPLAINT' in message:
@@ -53,12 +53,12 @@ def handle_complaint_event(message, db, Notification):
                 message=f"Your {category} complaint '{title}' has been received and will be assigned to a worker.",
                 type='COMPLAINT_CREATED'
             )
-            db.session.add(n)
-            db.session.commit()
+            db.add(n)
+            db.commit()
             log.info('NEW_COMPLAINT notification saved for: %s', student_email)
 
     except Exception as e:
-        db.session.rollback()
+        db.rollback()
         log.error('complaint event error: %s', e)
 
 
@@ -75,7 +75,7 @@ def handle_match_found(message, db, Notification):
         item_name = parts[4].strip()
 
         if is_valid_email(email1):
-            db.session.add(Notification(
+            db.add(Notification(
                 recipient_email=email1,
                 title='🤖 AI Match Found!',
                 message=f"Your lost item '{item_name}' may have been found! Check Lost & Found.",
@@ -87,7 +87,7 @@ def handle_match_found(message, db, Notification):
             log.warn('Skipping match notification — invalid email1: %s', email1)
 
         if is_valid_email(email2):
-            db.session.add(Notification(
+            db.add(Notification(
                 recipient_email=email2,
                 title='🤖 Match Found!',
                 message="The item you found matches a lost report! Check Lost & Found.",
@@ -98,10 +98,10 @@ def handle_match_found(message, db, Notification):
         else:
             log.warn('Skipping match notification — invalid email2: %s', email2)
 
-        db.session.commit()
+        db.commit()
 
     except Exception as e:
-        db.session.rollback()
+        db.rollback()
         log.error('match event error: %s', e)
 
 
@@ -127,11 +127,10 @@ def start_kafka_consumer(app, db, Notification, bootstrap_servers, group_id):
                 raw = msg.value().decode('utf-8')
                 topic = msg.topic()
                 log.info('Received event on topic [%s]: %s', topic, raw)
-                with app.app_context():
-                    if topic == 'complaint-events':
-                        handle_complaint_event(raw, db, Notification)
-                    elif topic == 'match-found-topic':
-                        handle_match_found(raw, db, Notification)
+                if topic == 'complaint-events':
+                    handle_complaint_event(raw, db, Notification)
+                elif topic == 'match-found-topic':
+                    handle_match_found(raw, db, Notification)
             except Exception as e:
                 log.error('consumer loop error: %s', e)
 

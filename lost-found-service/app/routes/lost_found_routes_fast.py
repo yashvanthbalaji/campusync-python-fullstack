@@ -74,7 +74,7 @@ def report_item(
                 f.write(image.file.read())
             image_path = unique_filename
 
-        item = svc.report_item(email, data, image_path)
+        item = svc.report_item(email, data, image_path, db)
         return item.to_dict()
 
     except HTTPException as he:
@@ -105,7 +105,7 @@ def get_all_items(
             except Exception as e:
                 log.warning("⚠️ Token verification or user fetch failed (defaulting HOSTEL): %s", e)
 
-        items = svc.get_all_items(viewer_student_type, campus_filter=campus)
+        items = svc.get_all_items(viewer_student_type, campus_filter=campus, db=db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /all failed: %s", e)
@@ -117,7 +117,7 @@ def get_my_items(
     db: Session = Depends(get_db)
 ):
     try:
-        items = svc.get_my_items(current_user.email)
+        items = svc.get_my_items(current_user.email, db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /my failed: %s", e)
@@ -146,7 +146,7 @@ def get_by_type(
             except Exception as e:
                 log.warning("⚠️ Token verification or user fetch failed (defaulting HOSTEL): %s", e)
 
-        items = svc.get_by_type(type, viewer_student_type, campus_filter=campus)
+        items = svc.get_by_type(type, viewer_student_type, campus_filter=campus, db=db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /type failed: %s", e)
@@ -155,7 +155,7 @@ def get_by_type(
 @router.get('/matches')
 def get_potential_matches(db: Session = Depends(get_db)):
     try:
-        matches = svc.get_potential_matches()
+        matches = svc.get_potential_matches(db)
         return [i.to_dict() for i in matches]
     except Exception as e:
         log.error("[Routes] GET /matches failed: %s", e)
@@ -164,7 +164,7 @@ def get_potential_matches(db: Session = Depends(get_db)):
 @router.get('/{id}/match-details')
 def get_match_details(id: int, db: Session = Depends(get_db)):
     try:
-        details = svc.get_matched_pair_details(id)
+        details = svc.get_matched_pair_details(id, db)
         return details
     except Exception as e:
         log.error("[Routes] GET /%s/match-details failed: %s", id, e)
@@ -177,7 +177,7 @@ def update_item_status(
     db: Session = Depends(get_db)
 ):
     try:
-        item = svc.update_item_status(id, body.itemStatus)
+        item = svc.update_item_status(id, body.itemStatus, db)
         return item.to_dict()
     except Exception as e:
         log.error("[Routes] PUT /status/%s failed: %s", id, e)
@@ -186,7 +186,7 @@ def update_item_status(
 @router.put('/{id}/resolve')
 def confirm_resolved(id: int, db: Session = Depends(get_db)):
     try:
-        item = svc.confirm_resolved(id)
+        item = svc.confirm_resolved(id, db)
         return item.to_dict()
     except Exception as e:
         log.error("[Routes] PUT /%s/resolve failed: %s", id, e)
@@ -195,7 +195,7 @@ def confirm_resolved(id: int, db: Session = Depends(get_db)):
 @router.put('/{id}/status')
 def update_status(id: int, status: str, db: Session = Depends(get_db)):
     try:
-        item = svc.update_status(id, status)
+        item = svc.update_status(id, status, db)
         return item.to_dict()
     except Exception as e:
         log.error("[Routes] PUT /%s/status failed: %s", id, e)
@@ -204,7 +204,7 @@ def update_status(id: int, status: str, db: Session = Depends(get_db)):
 @router.get('/by-item-status')
 def get_by_item_status(status: str, db: Session = Depends(get_db)):
     try:
-        items = svc.get_items_by_item_status(status)
+        items = svc.get_items_by_item_status(status, db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /by-item-status failed: %s", e)
@@ -213,7 +213,7 @@ def get_by_item_status(status: str, db: Session = Depends(get_db)):
 @router.get('/search')
 def search(query: str, db: Session = Depends(get_db)):
     try:
-        items = gemini_svc.search_by_description(query)
+        items = gemini_svc.search_by_description(query, db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /search failed: %s", e)

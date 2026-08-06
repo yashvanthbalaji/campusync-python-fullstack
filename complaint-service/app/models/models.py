@@ -1,27 +1,31 @@
-from app.extensions import db
+from sqlalchemy import BigInteger, Column, DateTime, String
+from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
 
-class Complaint(db.Model):
+class Base(DeclarativeBase):
+    pass
+
+class Complaint(Base):
     __tablename__ = 'complaints'
 
-    id = db.Column(db.BigInteger, primary_key=True)
-    student_email = db.Column(db.String(255), nullable=False)
-    student_name = db.Column(db.String(255), nullable=True)
-    room_number = db.Column(db.String(255), nullable=True)
-    title = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(1000), nullable=False)
-    category = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), nullable=False, default='PENDING')
-    image_path = db.Column(db.String(255), nullable=True)
-    time_of_day = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
-    resolved_at = db.Column(db.DateTime, nullable=True)
-    resolved_by_worker = db.Column(db.String(255), nullable=True)
-    worker_note = db.Column(db.String(500), nullable=True)
-    work_type = db.Column(db.String(255), nullable=True)
-    assigned_worker_email = db.Column(db.String(255), nullable=True)
-    assigned_worker_name = db.Column(db.String(255), nullable=True)
+    id = Column(BigInteger, primary_key=True)
+    student_email = Column(String(255), nullable=False)
+    student_name = Column(String(255), nullable=True)
+    room_number = Column(String(255), nullable=True)
+    title = Column(String(255), nullable=False)
+    description = Column(String(1000), nullable=False)
+    category = Column(String(255), nullable=True)
+    status = Column(String(20), nullable=False, default='PENDING')
+    image_path = Column(String(255), nullable=True)
+    time_of_day = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True)
+    resolved_at = Column(DateTime, nullable=True)
+    resolved_by_worker = Column(String(255), nullable=True)
+    worker_note = Column(String(500), nullable=True)
+    work_type = Column(String(255), nullable=True)
+    assigned_worker_email = Column(String(255), nullable=True)
+    assigned_worker_name = Column(String(255), nullable=True)
 
     def to_dict(self):
         return {

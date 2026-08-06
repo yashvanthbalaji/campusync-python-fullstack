@@ -57,6 +57,7 @@ def raise_complaint(
             form_data=form_data,
             image_file=wrapped_image,
             auth_service_url=AUTH_SERVICE_URL,
+            db=db,
         )
         return complaint.to_dict()
     except Exception as e:
@@ -69,7 +70,7 @@ def get_my_complaints(
     db: Session = Depends(get_db)
 ):
     try:
-        complaints = svc.get_my_complaints(current_user.email)
+        complaints = svc.get_my_complaints(current_user.email, db)
         return [c.to_dict() for c in complaints]
     except Exception as e:
         log.error("[Routes] GET /my failed: %s", e)
@@ -96,7 +97,7 @@ def get_all_complaints(
         except Exception as e:
             log.warning("⚠️ Role check failed (allowing through): %s", e)
 
-        complaints = svc.get_all_complaints()
+        complaints = svc.get_all_complaints(db)
         return [c.to_dict() for c in complaints]
     except HTTPException as he:
         raise he
@@ -107,7 +108,7 @@ def get_all_complaints(
 @router.get('/pending')
 def get_pending_complaints(db: Session = Depends(get_db)):
     try:
-        complaints = svc.get_pending_complaints()
+        complaints = svc.get_pending_complaints(db)
         return [c.to_dict() for c in complaints]
     except Exception as e:
         log.error("[Routes] GET /pending failed: %s", e)
@@ -119,7 +120,7 @@ def get_my_assigned_complaints(
     db: Session = Depends(get_db)
 ):
     try:
-        complaints = svc.get_my_assigned_complaints(current_user.email)
+        complaints = svc.get_my_assigned_complaints(current_user.email, db)
         return [c.to_dict() for c in complaints]
     except Exception as e:
         log.error("[Routes] GET /my-assigned failed: %s", e)
@@ -148,7 +149,7 @@ def resolve_complaint(
         except Exception as e:
             log.warning("⚠️ Role check failed (allowing through): %s", e)
 
-        complaint = svc.resolve_complaint(id, body.workerNote, email)
+        complaint = svc.resolve_complaint(id, body.workerNote, email, db)
         return complaint.to_dict()
     except HTTPException as he:
         raise he
@@ -161,7 +162,7 @@ def resolve_complaint(
 @router.put('/update-status/{id}')
 def update_status(id: int, status: str, db: Session = Depends(get_db)):
     try:
-        complaint = svc.update_status(id, status)
+        complaint = svc.update_status(id, status, db)
         return complaint.to_dict()
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -180,7 +181,7 @@ def get_image(filename: str):
 @router.put('/assign-unassigned')
 def assign_unassigned(body: AssignUnassignedRequest, db: Session = Depends(get_db)):
     try:
-        count = svc.assign_unassigned_complaints(body.workType, body.workerEmail)
+        count = svc.assign_unassigned_complaints(body.workType, body.workerEmail, db)
         return {
             'assigned': count,
             'workType': body.workType,

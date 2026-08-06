@@ -1,22 +1,25 @@
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, String
+from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
-from app.extensions import db
 
+class Base(DeclarativeBase):
+    pass
 
-class Notification(db.Model):
+class Notification(Base):
     """
     Notification — SQLAlchemy model for the 'notifications' table.
     Mirrors the Java JPA entity in notification-service/src/.
     """
     __tablename__ = 'notifications'
 
-    id               = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    recipient_email  = db.Column(db.String(255), nullable=False)
-    title            = db.Column(db.String(255), nullable=False)
-    message          = db.Column(db.String(500), nullable=False)
-    type             = db.Column(db.String(30),  nullable=False)
-    related_item_id  = db.Column(db.BigInteger,  nullable=True)
-    is_read          = db.Column(db.Boolean, nullable=False, default=False)
-    created_at       = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    id               = Column(BigInteger, primary_key=True, autoincrement=True)
+    recipient_email  = Column(String(255), nullable=False)
+    title            = Column(String(255), nullable=False)
+    message          = Column(String(500), nullable=False)
+    type             = Column(String(30),  nullable=False)
+    related_item_id  = Column(BigInteger,  nullable=True)
+    is_read          = Column(Boolean, nullable=False, default=False)
+    created_at       = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     def to_dict(self):
         return {

@@ -57,6 +57,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
     volumes:
       - ./complaint-service/firebase-credentials.json:/app/firebase-credentials.json
       - complaint_uploads:/app/uploads
@@ -74,6 +76,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
     volumes:
       - ./lost-found-service/firebase-credentials.json:/app/firebase-credentials.json
       - lostfound_uploads:/app/uploads
@@ -90,6 +94,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
 
   frontend:
     build: ./frontend

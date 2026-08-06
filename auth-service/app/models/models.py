@@ -1,22 +1,26 @@
-from app.extensions import db
+from sqlalchemy import BigInteger, Column, DateTime, Integer, String
+from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
 
-class User(db.Model):
+class Base(DeclarativeBase):
+    pass
+
+class User(Base):
     __tablename__ = 'users'
 
-    id = db.Column(db.BigInteger, primary_key=True)
-    name = db.Column(db.String(100), nullable=True)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=True)
-    role = db.Column(db.String(20), nullable=False, default='STUDENT')
-    phone_number = db.Column(db.String(20), nullable=True)
-    work_types = db.Column(db.String(500), nullable=True)
-    max_complaints = db.Column(db.Integer, nullable=True)
-    room_number = db.Column(db.String(10), nullable=True)
-    year = db.Column(db.String(10), nullable=True)
-    student_type = db.Column(db.String(10), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    firebase_uid = db.Column(db.String(128), unique=True, nullable=True)
+    id = Column(BigInteger, primary_key=True)
+    name = Column(String(100), nullable=True)
+    email = Column(String(150), unique=True, nullable=False)
+    password = Column(String(255), nullable=True)
+    role = Column(String(20), nullable=False, default='STUDENT')
+    phone_number = Column(String(20), nullable=True)
+    work_types = Column(String(500), nullable=True)
+    max_complaints = Column(Integer, nullable=True)
+    room_number = Column(String(10), nullable=True)
+    year = Column(String(10), nullable=True)
+    student_type = Column(String(10), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    firebase_uid = Column(String(128), unique=True, nullable=True)
 
     def to_dict(self):
         return {

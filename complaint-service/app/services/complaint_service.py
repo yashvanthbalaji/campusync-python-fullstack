@@ -3,7 +3,6 @@ from datetime import datetime
 
 import requests as http_requests
 
-from app.extensions import db
 from app.models.models import Complaint
 from app.utils.file_utils import save_file
 from app.kafka.producer import (
@@ -39,7 +38,7 @@ def map_category_to_work_type(category):
 
 
 # ── Auto-assign worker ──────────────────────────────────────────────────────
-def auto_assign_worker(complaint, auth_service_url):
+def auto_assign_worker(complaint, auth_service_url, db):
     """Non-fatal: fetches first available worker by work_type and assigns."""
     if complaint.work_type == 'OTHER':
         log.info("WorkType is OTHER — skipping auto-assignment for complaint %s", complaint.id)
@@ -53,7 +52,7 @@ def auto_assign_worker(complaint, auth_service_url):
                 worker = workers[0]
                 complaint.assigned_worker_email = worker.get('email')
                 complaint.assigned_worker_name  = worker.get('name')
-                db.session.commit()
+                db.commit()
                 log.info(
                     "Auto-assigned complaint %s to worker %s",
                     complaint.id,
@@ -68,7 +67,7 @@ def auto_assign_worker(complaint, auth_service_url):
 
 
 # ── Raise a new complaint ───────────────────────────────────────────────────
-def raise_complaint(student_email, form_data, image_file, auth_service_url):
+def raise_complaint(student_email, form_data, image_file, auth_service_url, db):
     """
     Creates, persists, auto-assigns, and fires Kafka event for a new complaint.
     Returns the saved Complaint instance.
@@ -108,11 +107,11 @@ def raise_complaint(student_email, form_data, image_file, auth_service_url):
     )
 
     # 5. Persist
-    db.session.add(complaint)
-    db.session.commit()
+    db.add(complaint)
+    db.commit()
 
     # 6. Auto-assign worker
-    auto_assign_worker(complaint, auth_service_url)
+    auto_assign_worker(complaint, auth_service_url, db)
 
     # 7. Kafka event
     send_complaint_event(build_new_complaint_message(complaint))
@@ -122,35 +121,35 @@ def raise_complaint(student_email, form_data, image_file, auth_service_url):
 
 
 # ── Queries ─────────────────────────────────────────────────────────────────
-def get_my_complaints(student_email):
+def get_my_complaints(student_email, db):
     """All complaints by a given student, newest first."""
     return (
-        Complaint.query
+        db.query(Complaint)
         .filter_by(student_email=student_email)
         .order_by(Complaint.created_at.desc())
         .all()
     )
 
 
-def get_all_complaints():
+def get_all_complaints(db):
     """All complaints, newest first."""
-    return Complaint.query.order_by(Complaint.created_at.desc()).all()
+    return db.query(Complaint).order_by(Complaint.created_at.desc()).all()
 
 
-def get_my_assigned_complaints(worker_email):
+def get_my_assigned_complaints(worker_email, db):
     """Complaints assigned to a specific worker, newest first."""
     return (
-        Complaint.query
+        db.query(Complaint)
         .filter_by(assigned_worker_email=worker_email)
         .order_by(Complaint.created_at.desc())
         .all()
     )
 
 
-def get_pending_complaints():
+def get_pending_complaints(db):
     """Complaints that are PENDING or IN_PROGRESS, newest first."""
     return (
-        Complaint.query
+        db.query(Complaint)
         .filter(Complaint.status.in_(['PENDING', 'IN_PROGRESS']))
         .order_by(Complaint.created_at.desc())
         .all()
@@ -158,12 +157,12 @@ def get_pending_complaints():
 
 
 # ── Mutations ────────────────────────────────────────────────────────────────
-def resolve_complaint(complaint_id, worker_note, worker_email):
+def resolve_complaint(complaint_id, worker_note, worker_email, db):
     """
     Marks complaint RESOLVED, fires Kafka event.
     Raises ValueError if complaint not found.
     """
-    complaint = Complaint.query.get(complaint_id)
+    complaint = db.query(Complaint).get(complaint_id)
     if not complaint:
         raise ValueError(f"Complaint {complaint_id} not found")
 
@@ -171,36 +170,36 @@ def resolve_complaint(complaint_id, worker_note, worker_email):
     complaint.resolved_at         = datetime.utcnow()
     complaint.resolved_by_worker  = worker_email
     complaint.worker_note         = worker_note
-    db.session.commit()
+    db.commit()
 
     send_complaint_event(build_resolved_message(complaint, worker_email, worker_note))
     return complaint
 
 
-def update_status(complaint_id, new_status):
+def update_status(complaint_id, new_status, db):
     """Sets the status of a complaint to new_status. Raises ValueError if not found."""
-    complaint = Complaint.query.get(complaint_id)
+    complaint = db.query(Complaint).get(complaint_id)
     if not complaint:
         raise ValueError(f"Complaint {complaint_id} not found")
 
     complaint.status = new_status
-    db.session.commit()
+    db.commit()
     return complaint
 
 
-def assign_unassigned_complaints(work_type, worker_email):
+def assign_unassigned_complaints(work_type, worker_email, db):
     """
     Bulk-assigns all unassigned complaints of a given work_type to worker_email.
     Returns the count of newly assigned complaints.
     """
     complaints = (
-        Complaint.query
+        db.query(Complaint)
         .filter_by(work_type=work_type, assigned_worker_email=None)
         .all()
     )
     for c in complaints:
         c.assigned_worker_email = worker_email
-    db.session.commit()
+    db.commit()
     log.info(
         "Assigned %d complaint(s) of work_type=%s to worker %s",
         len(complaints), work_type, worker_email,

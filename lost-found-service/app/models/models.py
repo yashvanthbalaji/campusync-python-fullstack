@@ -1,29 +1,33 @@
-from app.extensions import db
+from sqlalchemy import BigInteger, Column, DateTime, String, Text
+from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
 
-class LostFoundItem(db.Model):
+class Base(DeclarativeBase):
+    pass
+
+class LostFoundItem(Base):
     __tablename__ = 'lost_found_items'
 
-    id = db.Column(db.BigInteger, primary_key=True)
-    reporter_email = db.Column(db.String(255), nullable=False)
-    reporter_name = db.Column(db.String(255), nullable=True)
-    reporter_phone = db.Column(db.String(255), nullable=True)
-    item_name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=False)
-    type = db.Column(db.String(255), nullable=False)
-    priority = db.Column(db.String(255), nullable=False)
-    location_category = db.Column(db.String(255), nullable=False)
-    location_floor = db.Column(db.String(255), nullable=False)
-    match_status = db.Column(db.String(255), nullable=False, default='UNMATCHED')
-    matched_with_id = db.Column(db.BigInteger, nullable=True)
-    image_url = db.Column(db.String(255), nullable=True)
-    ai_description = db.Column(db.String(255), nullable=True)
-    ai_tags = db.Column(db.Text, nullable=True)
-    status = db.Column(db.String(255), nullable=True, default='OPEN')
-    location = db.Column(db.String(255), nullable=True)
-    item_status = db.Column(db.String(255), nullable=False, default='OPEN')
-    student_type = db.Column(db.String(10), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+    id = Column(BigInteger, primary_key=True)
+    reporter_email = Column(String(255), nullable=False)
+    reporter_name = Column(String(255), nullable=True)
+    reporter_phone = Column(String(255), nullable=True)
+    item_name = Column(String(255), nullable=False)
+    description = Column(String(255), nullable=False)
+    type = Column(String(255), nullable=False)
+    priority = Column(String(255), nullable=False)
+    location_category = Column(String(255), nullable=False)
+    location_floor = Column(String(255), nullable=False)
+    match_status = Column(String(255), nullable=False, default='UNMATCHED')
+    matched_with_id = Column(BigInteger, nullable=True)
+    image_url = Column(String(255), nullable=True)
+    ai_description = Column(String(255), nullable=True)
+    ai_tags = Column(Text, nullable=True)
+    status = Column(String(255), nullable=True, default='OPEN')
+    location = Column(String(255), nullable=True)
+    item_status = Column(String(255), nullable=False, default='OPEN')
+    student_type = Column(String(10), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=True)
 
     def to_dict(self):
         return {
