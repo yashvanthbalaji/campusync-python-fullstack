@@ -62,7 +62,6 @@ html,
 body,
 #root {
   height: 100%;
-  overflow: hidden;
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -84,18 +83,6 @@ body::before {
   background: var(--bg-gradient);
   z-index: -10;
   pointer-events: none;
-}
-
-/* Force hardware-accelerated scroll container isolation on all layout wrappers */
-div[style*="padding-bottom"],
-div[style*="paddingBottom"],
-div[style*="min-height: 100vh"],
-div[style*="minHeight: 100vh"] {
-  height: 100% !important;
-  overflow-y: auto !important;
-  will-change: scroll-position;
-  transform: translateZ(0);
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Scrollbar ── */
