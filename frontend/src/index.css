@@ -36,10 +36,10 @@
   --text-primary: #F0F4FF;
   --text-secondary: #A8B4D8;
   --text-muted: #6B7A99;
-  --nav-bg: rgba(13, 13, 43, 0.85);
+  --nav-bg: #0D0D2B;
   --input-bg: rgba(255, 255, 255, 0.04);
   --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --header-bg: rgba(13, 13, 43, 0.75);
+  --header-bg: #0D0D2B;
 }
 
 /* ── Light Theme ── */
@@ -52,10 +52,10 @@
   --text-primary: #1a1a2e;
   --text-secondary: #555577;
   --text-muted: #8888aa;
-  --nav-bg: rgba(255, 255, 255, 0.92);
+  --nav-bg: #F0F4FF;
   --input-bg: rgba(0, 0, 0, 0.04);
   --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-bg: #F0F4FF;
 }
 
 html,
@@ -266,4 +266,10 @@ select:focus {
 
 .theme-light ::-webkit-scrollbar-thumb {
   background: #ccc;
+}
+
+/* Disable all backdrop-filter blurs globally to prevent layout repaint scroll lag */
+*, *::before, *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
