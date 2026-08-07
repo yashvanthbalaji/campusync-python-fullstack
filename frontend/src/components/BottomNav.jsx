@@ -31,9 +31,7 @@ export default function BottomNav() {
     <nav style={{
       position: 'fixed',
       bottom: 0, left: 0, right: 0,
-      background: 'var(--nav-bg)',
-      backdropFilter: 'blur(24px)',
-      WebkitBackdropFilter: 'blur(24px)',
+      background: 'rgba(20, 20, 30, 0.95)',
       borderTop: '1px solid rgba(255,255,255,0.08)',
       display: 'flex',
       justifyContent: 'space-around',
