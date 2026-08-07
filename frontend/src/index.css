@@ -281,3 +281,12 @@ div[style*="backgroundAttachment"] {
   background-image: none !important;
   background-attachment: scroll !important;
 }
+
+/* Promote cards, buttons, and interactive items to their own GPU compositing layers to prevent scroll/hover repaints of adjacent elements */
+.glass-card,
+.btn,
+div[style*="borderRadius"],
+div[style*="border-radius"] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
