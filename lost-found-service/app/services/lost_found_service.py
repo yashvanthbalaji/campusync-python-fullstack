@@ -113,7 +113,13 @@ def run_matching_algorithm(new_item, db):
         LostFoundItem.match_status == 'UNMATCHED',
         LostFoundItem.id != new_item.id,
         LostFoundItem.student_type == new_item.student_type
-    ).all()
+    )
+    # For HOSTEL items, also match by reporter_gender to avoid cross-gender matching
+    if new_item.student_type == 'HOSTEL' and new_item.reporter_gender:
+        candidates = candidates.filter(
+            LostFoundItem.reporter_gender == new_item.reporter_gender
+        )
+    candidates = candidates.all()
 
     if not candidates:
         return
@@ -193,24 +199,28 @@ def confirm_resolved(item_id, db):
 def get_all_items(viewer_student_type=None, campus_filter=None, viewer_gender=None, db=None):
     """Returns all items sorted by priority (HIGH first), then by created_at desc.
     - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
-    - If viewer_student_type is 'HOSTEL' and viewer_gender is set:
-        returns items where reporter_gender matches OR student_type is 'COLLEGE'.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is 'HOSTEL' or 'COLLEGE', filters accordingly.
-    - If viewer_student_type is 'HOSTEL' and no filter, returns all items."""
+    - If viewer_student_type is 'HOSTEL' and campus_filter is explicitly 'HOSTEL' or 'COLLEGE':
+        applies that filter (takes priority over gender).
+    - If viewer_student_type is 'HOSTEL', campus_filter is 'ALL', and viewer_gender is set:
+        returns COLLEGE items + same-gender HOSTEL items.
+    - Otherwise returns all items."""
     from sqlalchemy import or_
     query = db.query(LostFoundItem)
     if viewer_student_type == 'COLLEGE':
         query = query.filter(LostFoundItem.student_type == 'COLLEGE')
     elif viewer_student_type == 'HOSTEL':
-        if viewer_gender:
+        if campus_filter in ('HOSTEL', 'COLLEGE'):
+            # Explicit campus filter takes priority
+            query = query.filter(LostFoundItem.student_type == campus_filter)
+        elif viewer_gender:
+            # Gender-based auto-filter: see same-gender hostel + all college
             query = query.filter(
                 or_(
                     LostFoundItem.student_type == 'COLLEGE',
                     LostFoundItem.reporter_gender == viewer_gender
                 )
             )
-        elif campus_filter in ('HOSTEL', 'COLLEGE'):
-            query = query.filter(LostFoundItem.student_type == campus_filter)
+        # else: no filter — HOSTEL viewer with no gender sees everything
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()
@@ -220,24 +230,28 @@ def get_all_items(viewer_student_type=None, campus_filter=None, viewer_gender=No
 def get_by_type(item_type, viewer_student_type=None, campus_filter=None, viewer_gender=None, db=None):
     """Returns items of a given type, sorted by priority then created_at desc.
     - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
-    - If viewer_student_type is 'HOSTEL' and viewer_gender is set:
-        returns items where reporter_gender matches OR student_type is 'COLLEGE'.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is 'HOSTEL' or 'COLLEGE', filters accordingly.
-    - If viewer_student_type is 'HOSTEL' and no filter, returns all items."""
+    - If viewer_student_type is 'HOSTEL' and campus_filter is explicitly 'HOSTEL' or 'COLLEGE':
+        applies that filter (takes priority over gender).
+    - If viewer_student_type is 'HOSTEL', campus_filter is 'ALL', and viewer_gender is set:
+        returns COLLEGE items + same-gender HOSTEL items.
+    - Otherwise returns all items."""
     from sqlalchemy import or_
     query = db.query(LostFoundItem).filter_by(type=item_type)
     if viewer_student_type == 'COLLEGE':
         query = query.filter(LostFoundItem.student_type == 'COLLEGE')
     elif viewer_student_type == 'HOSTEL':
-        if viewer_gender:
+        if campus_filter in ('HOSTEL', 'COLLEGE'):
+            # Explicit campus filter takes priority
+            query = query.filter(LostFoundItem.student_type == campus_filter)
+        elif viewer_gender:
+            # Gender-based auto-filter: see same-gender hostel + all college
             query = query.filter(
                 or_(
                     LostFoundItem.student_type == 'COLLEGE',
                     LostFoundItem.reporter_gender == viewer_gender
                 )
             )
-        elif campus_filter in ('HOSTEL', 'COLLEGE'):
-            query = query.filter(LostFoundItem.student_type == campus_filter)
+        # else: no filter — HOSTEL viewer with no gender sees everything
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()

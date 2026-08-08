@@ -64,7 +64,8 @@ export default function LostFound() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [classroomNumber, setClassroomNumber] = useState('');
-  const [reportLocation, setReportLocation] = useState(studentType || 'HOSTEL'); // 'COLLEGE' or 'HOSTEL'
+  // reportLocation is synced via useEffect once studentType loads from auth context
+  const [reportLocation, setReportLocation] = useState('HOSTEL'); // will be corrected by useEffect
   const [campusFilter, setCampusFilter] = useState('ALL');
   const [form, setForm]         = useState({
     itemName:'', description:'', type:'LOST',
@@ -131,6 +132,11 @@ export default function LostFound() {
       setFetching(false);
     }
   }, [studentType, campusFilter]);
+
+  // Sync reportLocation with actual studentType once auth loads
+  useEffect(() => {
+    if (studentType) setReportLocation(studentType);
+  }, [studentType]);
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
 
@@ -245,9 +251,18 @@ export default function LostFound() {
     return items;
   })();
 
+  // Combined lookup covering both HOSTEL and COLLEGE categories/floors
+  const ALL_LOCATION_CATEGORIES = [
+    ...LOCATION_CATEGORIES,
+    ...COLLEGE_LOCATION_CATEGORIES.filter(c => !LOCATION_CATEGORIES.find(h => h.value === c.value))
+  ];
+  const ALL_FLOOR_OPTIONS = [
+    ...FLOOR_OPTIONS,
+    ...COLLEGE_FLOOR_OPTIONS.filter(f => !FLOOR_OPTIONS.find(h => h.value === f.value))
+  ];
   const formatLocation = (cat, floor) => {
-    const c = LOCATION_CATEGORIES.find(l => l.value===cat)?.label || cat;
-    const f = FLOOR_OPTIONS.find(o => o.value===floor)?.label || floor;
+    const c = ALL_LOCATION_CATEGORIES.find(l => l.value===cat)?.label || cat;
+    const f = ALL_FLOOR_OPTIONS.find(o => o.value===floor)?.label || floor;
     return `${c} · ${f}`;
   };
 
