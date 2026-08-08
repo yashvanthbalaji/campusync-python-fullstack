@@ -39,8 +39,10 @@ export default function Login() {
         navigate(hasProfile ? '/worker' : '/profile-setup');
 
       } else {
-        // STUDENT — check if roomNumber exists in DB
-        const hasProfile = data.roomNumber && data.roomNumber.trim().length > 0;
+        // STUDENT — profile is complete when name AND studentType are set
+        // (COLLEGE students have no roomNumber, so we can't use that as the check)
+        const hasProfile = (data.name && data.name.trim().length > 0) &&
+                           (data.studentType && data.studentType.trim().length > 0);
         localStorage.setItem('profileComplete', hasProfile ? 'true' : 'false');
         navigate(hasProfile ? '/dashboard' : '/profile-setup');
       }

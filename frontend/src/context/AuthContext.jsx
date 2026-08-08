@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
     roomNumber: '',
     studentType: '',
     name: '',
+    gender: '',
     loading: true,
   });
 
@@ -53,6 +54,7 @@ export function AuthProvider({ children }) {
             roomNumber: profile.roomNumber || localStorage.getItem('userRoom') || '',
             studentType: profile.studentType || localStorage.getItem('studentType') || '',
             name: profile.name || localStorage.getItem('userName') || '',
+            gender: profile.gender || localStorage.getItem('userGender') || '',
             loading: false,
           };
 
@@ -64,6 +66,7 @@ export function AuthProvider({ children }) {
           localStorage.setItem('userYear', state.year);
           localStorage.setItem('userRoom', state.roomNumber);
           localStorage.setItem('studentType', state.studentType);
+          localStorage.setItem('userGender', state.gender);
 
           setAuthState(state);
           console.log('🔐 AuthContext restored — role:', state.role, 'email:', state.email);
@@ -78,6 +81,7 @@ export function AuthProvider({ children }) {
             roomNumber: localStorage.getItem('userRoom') || '',
             studentType: localStorage.getItem('studentType') || '',
             name: localStorage.getItem('userName') || '',
+            gender: localStorage.getItem('userGender') || '',
             loading: false,
           });
         }
@@ -130,6 +134,7 @@ export function AuthProvider({ children }) {
       roomNumber: profile.roomNumber || '',
       studentType: profile.studentType || '',
       name: profile.name || '',
+      gender: profile.gender || '',
       loading: false,
     };
 
@@ -139,6 +144,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('userYear', state.year);
     localStorage.setItem('userRoom', state.roomNumber);
     localStorage.setItem('studentType', state.studentType);
+    localStorage.setItem('userGender', state.gender);
 
     setAuthState(state);
     console.log('🔐 Registered + synced — role:', state.role);
@@ -169,6 +175,7 @@ export function AuthProvider({ children }) {
       roomNumber: profile.roomNumber || '',
       studentType: profile.studentType || '',
       name: profile.name || '',
+      gender: profile.gender || '',
       loading: false,
     };
 
@@ -178,6 +185,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('userYear', state.year);
     localStorage.setItem('userRoom', state.roomNumber);
     localStorage.setItem('studentType', state.studentType);
+    localStorage.setItem('userGender', state.gender);
 
     setAuthState(state);
     console.log('🔐 Logged in + synced — role:', state.role);
@@ -196,6 +204,10 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('workerTypes');
     localStorage.removeItem('maxComplaints');
     localStorage.removeItem('studentType');
+    localStorage.removeItem('userGender');
+    localStorage.removeItem('userYear');
+    localStorage.removeItem('userRoom');
+    localStorage.removeItem('profileComplete');
     setAuthState({
       token: null,
       email: '',
@@ -204,6 +216,7 @@ export function AuthProvider({ children }) {
       roomNumber: '',
       studentType: '',
       name: '',
+      gender: '',
       loading: false,
     });
   };
