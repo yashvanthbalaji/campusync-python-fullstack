@@ -120,7 +120,8 @@ CampuSync implements a strict **Database-per-Service Architecture** inside Docke
 > Provides system-wide user role management (Promote/Demote between Student, Worker, and Admin), real-time service health telemetry, and global complaint metrics.
 
 <p align="center">
-  <img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <img width="1907" height="988" alt="image" src="https://github.com/user-attachments/assets/6ea3756c-5a97-4610-889e-b30501839eee" />
+
 </p>
 
 ---
@@ -129,7 +130,9 @@ CampuSync implements a strict **Database-per-Service Architecture** inside Docke
 > Allows students to file complaints, report lost & found items with location context, filter items by gender & campus area, and safely contact item finders.
 
 <p align="center">
-  <img src="screenshots/student_dashboard.png" alt="Student Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/79f856ec-40d6-4604-adfa-d09d15605e87" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5338c4c7-f7cf-4677-957a-8dfa9d5a005b" />
+
 </p>
 
 ---
@@ -138,7 +141,8 @@ CampuSync implements a strict **Database-per-Service Architecture** inside Docke
 > Dedicated maintenance console for technicians to view assigned complaints based on work category specialization, monitor workload limits, and update task progress.
 
 <p align="center">
-  <img src="screenshots/worker_dashboard.png" alt="Worker Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cb66799a-1fb4-4929-9f8e-ed6a4231cb8e" />
+
 </p>
 
 ---
