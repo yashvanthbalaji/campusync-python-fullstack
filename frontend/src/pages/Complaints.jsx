@@ -271,6 +271,21 @@ export default function Complaints() {
 
       {/* COMPLAINTS LIST grouped by date → timeOfDay */}
       <div style={{ padding:20 }}>
+        {role === 'STUDENT' && (
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            marginBottom: '16px',
+            color: 'white',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            🔧 Complaint resolution feature is being processed — your complaints are received and will be attended to shortly!
+          </div>
+        )}
         {fetching ? (
           <div style={{ textAlign:'center', padding:40, color:'var(--text-secondary)' }}>⏳ Loading...</div>
         ) : complaints.length === 0 ? (
