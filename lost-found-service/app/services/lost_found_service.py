@@ -58,10 +58,11 @@ def report_item(reporter_email, form_data, image_path, db):
             item.reporter_name = user_info.get('name')
             item.reporter_phone = user_info.get('phoneNumber')
             item.student_type = user_info.get('studentType') or 'COLLEGE'
+            item.reporter_gender = user_info.get('gender') or ''
             db.commit()
-            log.info("👤 Reporter info fetched: name='%s' phone='%s' studentType='%s'",
+            log.info("👤 Reporter info fetched: name='%s' phone='%s' studentType='%s' gender='%s'",
                      user_info.get('name'), user_info.get('phoneNumber'),
-                     item.student_type)
+                     item.student_type, item.reporter_gender)
     except Exception as e:
         item.student_type = 'COLLEGE'
         db.commit()
@@ -183,32 +184,54 @@ def confirm_resolved(item_id, db):
 #  Query methods
 # ──────────────────────────────────────────────────────────────
 
-def get_all_items(viewer_student_type=None, campus_filter=None, db=None):
+def get_all_items(viewer_student_type=None, campus_filter=None, viewer_gender=None, db=None):
     """Returns all items sorted by priority (HIGH first), then by created_at desc.
     - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is set to 'HOSTEL' or 'COLLEGE', filters accordingly.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is None, returns all items."""
+    - If viewer_student_type is 'HOSTEL' and viewer_gender is set:
+        returns items where reporter_gender matches OR student_type is 'COLLEGE'.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is 'HOSTEL' or 'COLLEGE', filters accordingly.
+    - If viewer_student_type is 'HOSTEL' and no filter, returns all items."""
+    from sqlalchemy import or_
     query = db.query(LostFoundItem)
     if viewer_student_type == 'COLLEGE':
         query = query.filter(LostFoundItem.student_type == 'COLLEGE')
-    elif viewer_student_type == 'HOSTEL' and campus_filter in ('HOSTEL', 'COLLEGE'):
-        query = query.filter(LostFoundItem.student_type == campus_filter)
+    elif viewer_student_type == 'HOSTEL':
+        if viewer_gender:
+            query = query.filter(
+                or_(
+                    LostFoundItem.student_type == 'COLLEGE',
+                    LostFoundItem.reporter_gender == viewer_gender
+                )
+            )
+        elif campus_filter in ('HOSTEL', 'COLLEGE'):
+            query = query.filter(LostFoundItem.student_type == campus_filter)
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()
     ).all()
 
 
-def get_by_type(item_type, viewer_student_type=None, campus_filter=None, db=None):
+def get_by_type(item_type, viewer_student_type=None, campus_filter=None, viewer_gender=None, db=None):
     """Returns items of a given type, sorted by priority then created_at desc.
     - If viewer_student_type is 'COLLEGE', returns only COLLEGE items.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is set to 'HOSTEL' or 'COLLEGE', filters accordingly.
-    - If viewer_student_type is 'HOSTEL' and campus_filter is None, returns all items."""
+    - If viewer_student_type is 'HOSTEL' and viewer_gender is set:
+        returns items where reporter_gender matches OR student_type is 'COLLEGE'.
+    - If viewer_student_type is 'HOSTEL' and campus_filter is 'HOSTEL' or 'COLLEGE', filters accordingly.
+    - If viewer_student_type is 'HOSTEL' and no filter, returns all items."""
+    from sqlalchemy import or_
     query = db.query(LostFoundItem).filter_by(type=item_type)
     if viewer_student_type == 'COLLEGE':
         query = query.filter(LostFoundItem.student_type == 'COLLEGE')
-    elif viewer_student_type == 'HOSTEL' and campus_filter in ('HOSTEL', 'COLLEGE'):
-        query = query.filter(LostFoundItem.student_type == campus_filter)
+    elif viewer_student_type == 'HOSTEL':
+        if viewer_gender:
+            query = query.filter(
+                or_(
+                    LostFoundItem.student_type == 'COLLEGE',
+                    LostFoundItem.reporter_gender == viewer_gender
+                )
+            )
+        elif campus_filter in ('HOSTEL', 'COLLEGE'):
+            query = query.filter(LostFoundItem.student_type == campus_filter)
     return query.order_by(
         PRIORITY_ORDER,
         LostFoundItem.created_at.desc()

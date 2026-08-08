@@ -91,6 +91,7 @@ def get_all_items(
 ):
     try:
         viewer_student_type = 'HOSTEL'
+        viewer_gender = None
         if authorization and authorization.startswith('Bearer '):
             token = authorization[7:]
             try:
@@ -101,11 +102,13 @@ def get_all_items(
                     url = f"{AUTH_SERVICE_URL}/api/users/user/{email}"
                     resp = http_requests.get(url, timeout=5)
                     if resp.status_code == 200:
-                        viewer_student_type = resp.json().get('studentType') or 'HOSTEL'
+                        user_data = resp.json()
+                        viewer_student_type = user_data.get('studentType') or 'HOSTEL'
+                        viewer_gender = user_data.get('gender') or None
             except Exception as e:
                 log.warning("⚠️ Token verification or user fetch failed (defaulting HOSTEL): %s", e)
 
-        items = svc.get_all_items(viewer_student_type, campus_filter=campus, db=db)
+        items = svc.get_all_items(viewer_student_type, campus_filter=campus, viewer_gender=viewer_gender, db=db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /all failed: %s", e)
@@ -132,6 +135,7 @@ def get_by_type(
 ):
     try:
         viewer_student_type = 'HOSTEL'
+        viewer_gender = None
         if authorization and authorization.startswith('Bearer '):
             token = authorization[7:]
             try:
@@ -142,11 +146,13 @@ def get_by_type(
                     url = f"{AUTH_SERVICE_URL}/api/users/user/{email}"
                     resp = http_requests.get(url, timeout=5)
                     if resp.status_code == 200:
-                        viewer_student_type = resp.json().get('studentType') or 'HOSTEL'
+                        user_data = resp.json()
+                        viewer_student_type = user_data.get('studentType') or 'HOSTEL'
+                        viewer_gender = user_data.get('gender') or None
             except Exception as e:
                 log.warning("⚠️ Token verification or user fetch failed (defaulting HOSTEL): %s", e)
 
-        items = svc.get_by_type(type, viewer_student_type, campus_filter=campus, db=db)
+        items = svc.get_by_type(type, viewer_student_type, campus_filter=campus, viewer_gender=viewer_gender, db=db)
         return [i.to_dict() for i in items]
     except Exception as e:
         log.error("[Routes] GET /type failed: %s", e)

@@ -27,6 +27,7 @@ class LostFoundItem(Base):
     location = Column(String(255), nullable=True)
     item_status = Column(String(255), nullable=False, default='OPEN')
     student_type = Column(String(10), nullable=True)
+    reporter_gender = Column(String(10), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=True)
 
     def to_dict(self):
@@ -48,5 +49,6 @@ class LostFoundItem(Base):
             'status': self.status,
             'itemStatus': self.item_status,
             'studentType': self.student_type or '',
+            'reporterGender': self.reporter_gender or '',
             'createdAt': self.created_at.isoformat() if self.created_at else None
         }
