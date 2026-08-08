@@ -890,7 +890,8 @@ export default function LostFound() {
                   fontSize:'0.75rem', color:'#A78BFA',
                   fontFamily:"'Inter',sans-serif", fontWeight:600,
                 }}>
-                  👤 Reported by: {matchDetails.matchedWith?.reporterEmail || 'Unknown'}
+                  👤 Reported by: {matchDetails.matchedWith?.reporterName || matchDetails.matchedWith?.reporterEmail?.split('@')[0] || 'Unknown'}
+                  <div style={{ marginTop: 2 }}>📞 Phone: {matchDetails.matchedWith?.reporterPhone || 'Contact via campus office'}</div>
                 </div>
               </div>
             </div>
@@ -1021,7 +1022,8 @@ export default function LostFound() {
             <div style={{ marginBottom:14 }}>
               <div style={{ fontSize:'0.72rem', color:'var(--text-muted)', fontWeight:600, marginBottom:4, fontFamily:"'Plus Jakarta Sans',sans-serif", letterSpacing:'0.04em' }}>👤 REPORTED BY</div>
               <div style={{ fontSize:'0.88rem', color:'var(--text-primary)', fontFamily:"'Inter',sans-serif" }}>
-                {selectedItem.reporterEmail || 'Unknown'}
+                <div>Name: {selectedItem.reporterName || selectedItem.reporterEmail?.split('@')[0]}</div>
+                <div style={{ marginTop:2 }}>Phone: {selectedItem.reporterPhone || 'Contact via campus office'}</div>
               </div>
             </div>
 
