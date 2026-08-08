@@ -12,6 +12,7 @@ class UserResponse(BaseModel):
     roomNumber: Optional[str] = None
     year: Optional[str] = None
     studentType: Optional[str] = None
+    gender: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -28,6 +29,7 @@ class UpdateProfileRequest(BaseModel):
     roomNumber: Optional[str] = None
     year: Optional[str] = None
     studentType: Optional[str] = None
+    gender: Optional[str] = None
 
 class AssignRoleRequest(BaseModel):
     email: str
@@ -44,5 +46,6 @@ def user_to_response(user) -> dict:
         'maxComplaints': user.max_complaints,
         'roomNumber': user.room_number or '',
         'year': user.year or '',
-        'studentType': user.student_type or ''
+        'studentType': user.student_type or '',
+        'gender': user.gender or ''
     }

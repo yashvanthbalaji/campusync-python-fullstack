@@ -19,6 +19,7 @@ class User(Base):
     room_number = Column(String(10), nullable=True)
     year = Column(String(10), nullable=True)
     student_type = Column(String(10), nullable=True)
+    gender = Column(String(10), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     firebase_uid = Column(String(128), unique=True, nullable=True)
 
@@ -34,5 +35,6 @@ class User(Base):
             'roomNumber': self.room_number or '',
             'year': self.year or '',
             'studentType': self.student_type or '',
+            'gender': self.gender or '',
             'firebaseUid': self.firebase_uid or ''
         }

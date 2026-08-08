@@ -45,7 +45,8 @@ def get_user_by_email(email: str, db: Session = Depends(get_db)):
         'name': user.name or '',
         'role': user.role,
         'phoneNumber': user.phone_number or '',
-        'studentType': user.student_type or 'HOSTEL'
+        'studentType': user.student_type or 'HOSTEL',
+        'gender': user.gender or ''
     }
 
 @router.get('/users')

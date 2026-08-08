@@ -62,6 +62,7 @@ def update_profile(db: Session, email: str, data: dict) -> User:
     if 'roomNumber' in data: user.room_number = data['roomNumber']
     if 'year' in data: user.year = data['year']
     if 'studentType' in data: user.student_type = data['studentType']
+    if 'gender' in data: user.gender = data['gender']
     db.commit()
     db.refresh(user)
     return user
