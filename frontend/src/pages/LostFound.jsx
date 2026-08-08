@@ -29,6 +29,14 @@ const LOCATION_CATEGORIES = [
   { value:'STEPS',        label:'🪜 Steps / Staircase' },
   { value:'COMMON_HALL',  label:'🏛️ Common Hall' },
 ];
+const COLLEGE_LOCATION_CATEGORIES = [
+  { value:'WASHING_AREA', label:'🚿 Nearby Washing Area' },
+  { value:'CLASSROOM',    label:'🏫 Classroom' },
+  { value:'COMMON_HALL',  label:'🏛️ Common Hall' },
+  { value:'STEPS',        label:'🪜 Steps / Staircase' },
+  { value:'OUTSIDE_ROOM', label:'🏠 Outside Classroom' },
+  { value:'CANTEEN',      label:'🍽️ Canteen' },
+];
 const FLOOR_OPTIONS = [
   { value:'GROUND',  label:'🏠 Ground Floor' },
   { value:'FIRST',   label:'1️⃣ First Floor' },
@@ -39,18 +47,30 @@ const FLOOR_OPTIONS = [
   { value:'SIXTH',   label:'6️⃣ Sixth Floor' },
   { value:'SEVENTH', label:'7️⃣ Seventh Floor' },
 ];
+const COLLEGE_FLOOR_OPTIONS = [
+  { value:'GROUND', label:'🏠 Ground Floor' },
+  { value:'FIRST',  label:'1️⃣ First Floor' },
+  { value:'SECOND', label:'2️⃣ Second Floor' },
+  { value:'THIRD',  label:'3️⃣ Third Floor' },
+  { value:'FOURTH', label:'4️⃣ Fourth Floor' },
+  { value:'FIFTH',  label:'5️⃣ Fifth Floor' },
+  { value:'SIXTH',  label:'6️⃣ Sixth Floor' },
+];
 
 export default function LostFound() {
   const { roomNumber, email: currentUserEmail, studentType } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [items, setItems]       = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [filter, setFilter]     = useState('ALL');
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [classroomNumber, setClassroomNumber] = useState('');
   const [campusFilter, setCampusFilter] = useState('ALL');
   const [form, setForm]         = useState({
     itemName:'', description:'', type:'LOST',
     priority:'MEDIUM', locationCategory:'WASHING_AREA', locationFloor:'GROUND',
   });
+  const [showForm, setShowForm] = useState(false);
+  const [filter, setFilter]     = useState('ALL');
   const [loading, setLoading]   = useState(false);
   const [fetching, setFetching] = useState(true);
   const [matchDetails, setMatchDetails] = useState(null);
@@ -62,10 +82,6 @@ export default function LostFound() {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3000);
   };
-
-  // ── Detail modal state ──
-  const [selectedItem, setSelectedItem]   = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
 
   // ── AI Search state ──
   const [searchTerm, setSearchTerm]       = useState('');
@@ -138,7 +154,11 @@ export default function LostFound() {
     try {
       const formData = new FormData();
       formData.append('itemName', form.itemName);
-      formData.append('description', form.description);
+      // For COLLEGE students, prefix description with classroom number if provided
+      const descriptionWithClass = studentType === 'COLLEGE' && classroomNumber.trim()
+        ? `Class: ${classroomNumber.trim()} - ${form.description}`
+        : form.description;
+      formData.append('description', descriptionWithClass);
       formData.append('type', form.type);
       formData.append('priority', form.priority);
       formData.append('locationCategory', form.locationCategory);
@@ -150,7 +170,9 @@ export default function LostFound() {
       });
       setShowForm(false);
       setForm({ itemName:'', description:'', type:'LOST', priority:'MEDIUM',
-                locationCategory:'WASHING_AREA', locationFloor:'GROUND' });
+                locationCategory: studentType === 'COLLEGE' ? 'WASHING_AREA' : 'WASHING_AREA',
+                locationFloor:'GROUND' });
+      setClassroomNumber('');
       setSelectedImage(null); setImagePreview(null);
       fetchItems();
     } catch { alert('Failed to submit. Please try again.'); }
@@ -735,17 +757,40 @@ export default function LostFound() {
 
               <label style={labelStyle}>📍 Location Category</label>
               <select style={selectStyle} value={form.locationCategory} onChange={e => setForm({...form,locationCategory:e.target.value})} onFocus={focus} onBlur={blur}>
-                {LOCATION_CATEGORIES.map(lc => <option key={lc.value} value={lc.value}>{lc.label}</option>)}
+                {(studentType === 'COLLEGE' ? COLLEGE_LOCATION_CATEGORIES : LOCATION_CATEGORIES)
+                  .map(lc => <option key={lc.value} value={lc.value}>{lc.label}</option>)}
               </select>
 
               <label style={labelStyle}>🏢 Floor Number</label>
               <select style={selectStyle} value={form.locationFloor} onChange={e => setForm({...form,locationFloor:e.target.value})} onFocus={focus} onBlur={blur}>
-                {FLOOR_OPTIONS.map(fl => <option key={fl.value} value={fl.value}>{fl.label}</option>)}
+                {(studentType === 'COLLEGE' ? COLLEGE_FLOOR_OPTIONS : FLOOR_OPTIONS)
+                  .map(fl => <option key={fl.value} value={fl.value}>{fl.label}</option>)}
               </select>
 
-              <label style={labelStyle}>Your Room (auto-filled)</label>
-              <input style={{...inputStyle,opacity:0.7,cursor:'default',background:'rgba(255,255,255,0.03)'}}
-                value={roomNumber ? `🏠 Room ${roomNumber}` : 'Complete profile first'} readOnly />
+              {studentType === 'COLLEGE' ? (
+                <>
+                  <label style={labelStyle}>🏫 Classroom Number (optional)</label>
+                  <input
+                    style={inputStyle}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    placeholder="e.g. 4201"
+                    value={classroomNumber}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, '');
+                      if (v.length <= 4) setClassroomNumber(v);
+                    }}
+                    onFocus={focus} onBlur={blur}
+                  />
+                </>
+              ) : (
+                <>
+                  <label style={labelStyle}>Your Room (auto-filled)</label>
+                  <input style={{...inputStyle,opacity:0.7,cursor:'default',background:'rgba(255,255,255,0.03)'}}
+                    value={roomNumber ? `🏠 Room ${roomNumber}` : 'Complete profile first'} readOnly />
+                </>
+              )}
 
               <label style={labelStyle}>📷 Photo (optional)</label>
               <input
