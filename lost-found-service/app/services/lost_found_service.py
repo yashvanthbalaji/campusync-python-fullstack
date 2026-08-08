@@ -57,10 +57,16 @@ def report_item(reporter_email, form_data, image_path, db):
             user_info = resp.json()
             item.reporter_name = user_info.get('name')
             item.reporter_phone = user_info.get('phoneNumber')
-            item.student_type = user_info.get('studentType') or 'COLLEGE'
             item.reporter_gender = user_info.get('gender') or ''
+            # locationContext overrides student_type — it represents WHERE item was found,
+            # not who the reporter is. 'COLLEGE' items are visible to all college students.
+            location_context = form_data.get('locationContext')
+            if location_context in ('COLLEGE', 'HOSTEL'):
+                item.student_type = location_context
+            else:
+                item.student_type = user_info.get('studentType') or 'COLLEGE'
             db.commit()
-            log.info("👤 Reporter info fetched: name='%s' phone='%s' studentType='%s' gender='%s'",
+            log.info("👤 Reporter info fetched: name='%s' phone='%s' studentType(location)='%s' gender='%s'",
                      user_info.get('name'), user_info.get('phoneNumber'),
                      item.student_type, item.reporter_gender)
     except Exception as e:

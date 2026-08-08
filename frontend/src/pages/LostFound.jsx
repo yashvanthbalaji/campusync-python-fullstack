@@ -64,6 +64,7 @@ export default function LostFound() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [classroomNumber, setClassroomNumber] = useState('');
+  const [reportLocation, setReportLocation] = useState(studentType || 'HOSTEL'); // 'COLLEGE' or 'HOSTEL'
   const [campusFilter, setCampusFilter] = useState('ALL');
   const [form, setForm]         = useState({
     itemName:'', description:'', type:'LOST',
@@ -154,8 +155,8 @@ export default function LostFound() {
     try {
       const formData = new FormData();
       formData.append('itemName', form.itemName);
-      // For COLLEGE students, prefix description with classroom number if provided
-      const descriptionWithClass = studentType === 'COLLEGE' && classroomNumber.trim()
+      // Description prefix uses reportLocation, not studentType
+      const descriptionWithClass = reportLocation === 'COLLEGE' && classroomNumber.trim()
         ? `Class: ${classroomNumber.trim()} - ${form.description}`
         : form.description;
       formData.append('description', descriptionWithClass);
@@ -163,6 +164,7 @@ export default function LostFound() {
       formData.append('priority', form.priority);
       formData.append('locationCategory', form.locationCategory);
       formData.append('locationFloor', form.locationFloor);
+      formData.append('locationContext', reportLocation); // tells backend where item was found
       if (selectedImage) formData.append('image', selectedImage);
 
       await axios.post(`${API_BASE}`, formData, {
@@ -170,9 +172,9 @@ export default function LostFound() {
       });
       setShowForm(false);
       setForm({ itemName:'', description:'', type:'LOST', priority:'MEDIUM',
-                locationCategory: studentType === 'COLLEGE' ? 'WASHING_AREA' : 'WASHING_AREA',
-                locationFloor:'GROUND' });
+                locationCategory:'WASHING_AREA', locationFloor:'GROUND' });
       setClassroomNumber('');
+      setReportLocation(studentType || 'HOSTEL'); // reset to user's own type
       setSelectedImage(null); setImagePreview(null);
       fetchItems();
     } catch { alert('Failed to submit. Please try again.'); }
@@ -755,19 +757,64 @@ export default function LostFound() {
               <textarea style={{...inputStyle,minHeight:70,resize:'vertical'}} placeholder="Describe the item..."
                 value={form.description} onChange={e => setForm({...form,description:e.target.value})} onFocus={focus} onBlur={blur} />
 
+              {/* ── Where did you lose/find it? ── */}
+              <label style={labelStyle}>📍 Where did you lose / find it?</label>
+              <div style={{ display:'flex', gap:10, marginBottom:14 }}>
+                <button
+                  onClick={() => {
+                    setReportLocation('COLLEGE');
+                    setForm(f => ({...f, locationCategory:'WASHING_AREA', locationFloor:'GROUND'}));
+                    setClassroomNumber('');
+                  }}
+                  style={{
+                    flex:1, padding:'12px', borderRadius:12, cursor:'pointer',
+                    border: reportLocation==='COLLEGE' ? 'none' : '1px solid var(--glass-border)',
+                    background: reportLocation==='COLLEGE'
+                      ? 'linear-gradient(135deg,#667eea,#764ba2)'
+                      : 'var(--glass-bg)',
+                    color: reportLocation==='COLLEGE' ? 'white' : 'var(--text-secondary)',
+                    fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'0.85rem',
+                    boxShadow: reportLocation==='COLLEGE' ? '0 4px 16px rgba(102,126,234,0.3)' : 'none',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  🏫 College Campus
+                </button>
+                <button
+                  onClick={() => {
+                    setReportLocation('HOSTEL');
+                    setForm(f => ({...f, locationCategory:'WASHING_AREA', locationFloor:'GROUND'}));
+                    setClassroomNumber('');
+                  }}
+                  style={{
+                    flex:1, padding:'12px', borderRadius:12, cursor:'pointer',
+                    border: reportLocation==='HOSTEL' ? 'none' : '1px solid var(--glass-border)',
+                    background: reportLocation==='HOSTEL'
+                      ? 'linear-gradient(135deg,#7C3AED,#4F46E5)'
+                      : 'var(--glass-bg)',
+                    color: reportLocation==='HOSTEL' ? 'white' : 'var(--text-secondary)',
+                    fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:'0.85rem',
+                    boxShadow: reportLocation==='HOSTEL' ? '0 4px 16px rgba(124,58,237,0.3)' : 'none',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  🏠 Hostel Area
+                </button>
+              </div>
+
               <label style={labelStyle}>📍 Location Category</label>
               <select style={selectStyle} value={form.locationCategory} onChange={e => setForm({...form,locationCategory:e.target.value})} onFocus={focus} onBlur={blur}>
-                {(studentType === 'COLLEGE' ? COLLEGE_LOCATION_CATEGORIES : LOCATION_CATEGORIES)
+                {(reportLocation === 'COLLEGE' ? COLLEGE_LOCATION_CATEGORIES : LOCATION_CATEGORIES)
                   .map(lc => <option key={lc.value} value={lc.value}>{lc.label}</option>)}
               </select>
 
               <label style={labelStyle}>🏢 Floor Number</label>
               <select style={selectStyle} value={form.locationFloor} onChange={e => setForm({...form,locationFloor:e.target.value})} onFocus={focus} onBlur={blur}>
-                {(studentType === 'COLLEGE' ? COLLEGE_FLOOR_OPTIONS : FLOOR_OPTIONS)
+                {(reportLocation === 'COLLEGE' ? COLLEGE_FLOOR_OPTIONS : FLOOR_OPTIONS)
                   .map(fl => <option key={fl.value} value={fl.value}>{fl.label}</option>)}
               </select>
 
-              {studentType === 'COLLEGE' ? (
+              {reportLocation === 'COLLEGE' ? (
                 <>
                   <label style={labelStyle}>🏫 Classroom Number (optional)</label>
                   <input

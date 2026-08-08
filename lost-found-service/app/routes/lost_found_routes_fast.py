@@ -33,6 +33,7 @@ def report_item(
     priority: str = Form(...),
     locationCategory: str = Form(...),
     locationFloor: str = Form(...),
+    locationContext: Optional[str] = Form(None),  # 'COLLEGE' or 'HOSTEL' — where item was found
     image: Optional[UploadFile] = File(None),
     current_user: FirebaseUser = Depends(verify_firebase_token),
     db: Session = Depends(get_db)
@@ -59,7 +60,8 @@ def report_item(
             'type': type,
             'priority': priority,
             'locationCategory': locationCategory,
-            'locationFloor': locationFloor
+            'locationFloor': locationFloor,
+            'locationContext': locationContext  # where item was physically found
         }
 
         image_path = None
