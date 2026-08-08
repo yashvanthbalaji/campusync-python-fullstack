@@ -1,163 +1,190 @@
 <div align="center">
 
-# 🏫 CampuSync
+# ⟁ CampuSync
 
-<img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=700&size=28&pause=1000&color=36BCF7&center=true&vCenter=true&width=700&lines=Campus+%26+Hostel+Management+Platform;Python+Full+Stack+Microservices+Application;AI-Powered+Lost+%26+Found+System;Kafka+Driven+Event+Architecture" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=700&size=28&pause=1000&color=00F5A0&center=true&vCenter=true&width=750&lines=Campus+%26+Hostel+Management+Platform;FastAPI+Python+Microservices+Architecture;AI-Powered+Lost+%26+Found+with+Gemini+Vision;Kafka-Driven+Event-Driven+Notifications;Gender-Segregated+Hostel+Privacy+Filters" alt="CampuSync Banner" />
 
-### 🚀 A Full-Stack Microservices Application built with Python, Flask, React, PostgreSQL, Firebase & Kafka
+### 🚀 Next-Gen Campus & Hostel Management Platform built with FastAPI, React 18, PostgreSQL, Firebase Auth, Apache Kafka & Docker
 
 <p>
-  <img src="https://img.shields.io/badge/Python-Flask-blue?logo=python&logoColor=white">
-  <img src="https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=black">
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql&logoColor=white">
-  <img src="https://img.shields.io/badge/Firebase-Authentication-FFCA28?logo=firebase&logoColor=black">
-  <img src="https://img.shields.io/badge/Kafka-Event%20Driven-black?logo=apachekafka">
-  <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white">
+  <a href="https://campusync.duckdns.org/"><img src="https://img.shields.io/badge/Live_Production-https%3A%2F%2Fcampusync.duckdns.org-00F5A0?style=for-the-badge&logo=nginx&logoColor=white"></a>
+  <img src="https://img.shields.io/badge/SSL%2FTLS-HTTPS_Secure-00D4FF?style=for-the-badge&logo=letsencrypt&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white">
+  <img src="https://img.shields.io/badge/React_18-Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+  <img src="https://img.shields.io/badge/PostgreSQL-Multi_DB-336791?style=for-the-badge&logo=postgresql&logoColor=white">
+  <img src="https://img.shields.io/badge/Firebase-Auth_RBAC-FFCA28?style=for-the-badge&logo=firebase&logoColor=black">
+  <img src="https://img.shields.io/badge/Kafka-Event_Driven-231F20?style=for-the-badge&logo=apachekafka&logoColor=white">
+  <img src="https://img.shields.io/badge/AI-Google_Gemini-8E44AD?style=for-the-badge&logo=googlegemini&logoColor=white">
+  <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white">
 </p>
 
 </div>
 
 ---
 
-# 🌟 Overview
+## 🌟 Overview
 
-**CampuSync** is a modern **Campus & Hostel Management System** developed using a highly decoupled **Python Microservices Architecture**.
+**CampuSync** is an enterprise-grade **Campus & Hostel Management Ecosystem** engineered using a decoupled **FastAPI Microservices Architecture**. It digitizes hostel complaints, automates maintenance worker job allocation, provides an AI-vision-powered Lost & Found engine, and enforces gender-segregated privacy filters for hostel residents.
 
-The platform digitizes and streamlines campus operations through secure authentication, intelligent complaint management, AI-powered lost & found tracking, and real-time event-driven notifications.
-
----
-
-# ✨ Highlights & Features
-
-### 🔐 Secure Firebase Authentication
-
-* Role-Based Access Control (RBAC)
-* Secure JWT verification
-* Centralized identity management
-
-### 👥 Multi-Role System
-
-Dedicated dashboards for:
-
-* 🎓 **Student - ( specific feature & access )**
-* 🛠️ **Worker - ( specific feature & access )**
-* 👨‍💼 **Admin - ( full access & control)**
-
-### 🤖 AI-Powered Lost & Found
-
-* Image similarity matching powered by **Google Gemini Vision AI**
-* Automated item identification
-* Faster recovery workflow for students
-
-### ⚡ Complaint Priority Engine
-
-* Smart complaint classification
-* Priority-based issue handling
-* Efficient task assignment workflow
-
-### 📢 Real-Time Notifications
-
-* Kafka-powered event processing
-* Asynchronous service communication
-* Instant status updates
+🔒 **Live Production Site**: [https://campusync.duckdns.org](https://campusync.duckdns.org) *(Secured with HTTPS & Nginx Reverse Proxy)*
 
 ---
 
-# 🏗️ Microservices Architecture
+## ✨ Key Platform Features
 
-The system follows a **Database-per-Service Architecture** to ensure scalability, maintainability, and fault isolation.
+### 🔐 1. Firebase Authentication & Granular RBAC
+- **Token Verification**: Custom JWT middleware validating Firebase ID tokens across all microservices.
+- **Three Distinct System Roles**:
+  - 🎓 **STUDENT** (Hostel Resident vs Day Scholar / College Student)
+  - 🛠️ **WORKER** (Maintenance Technicians with specialized skill sets & workload caps)
+  - 👨‍💼 **ADMIN** (System Managers with full user & role management capabilities)
+
+---
+
+### 🔍 2. AI-Powered Lost & Found Engine
+- **Google Gemini 1.5 Vision AI**: Automated image tag generation and multi-item visual similarity matching.
+- **Location Context Selection**: Reporters specify where an item was lost or found (**🏫 College Campus** vs **🏠 Hostel Area**).
+- **Gender-Segregated Hostel Privacy Filters**:
+  - 👦 **Hostel Male Students**: View only `Hostel Male` items + universal `College Campus` items.
+  - 👧 **Hostel Female Students**: View only `Hostel Female` items + universal `College Campus` items.
+  - 🏫 **Day Scholar (College) Students**: View universal `College Campus` items with classroom location details.
+- **Safe Claim Contact**: Replaces raw email display with a secure *"I think this is mine! 📞"* contact pop-up.
+
+---
+
+### ⚡ 3. Intelligent Complaint Management & Worker Dispatch
+- **Skill-Based Auto-Assignment**: Complaints are automatically assigned to available workers matching the required work type (`Electrical`, `Plumbing`, `Cleaning`, `AC Repair`, `Carpentry`, `Painting`, `Pest Control`, `General Maintenance`).
+- **Workload Capacity Engine**: Enforces max active complaint limits per worker to prevent technician burn-out.
+- **Retroactive Task Assignment**: When a worker registers or updates their capacity, unassigned queue complaints are automatically assigned.
+
+---
+
+### 📢 4. Event-Driven Kafka Messaging System
+- **Asynchronous Event Pipeline**: Apache Kafka event producer/consumer decouples complaint status changes and AI match alerts.
+- **Real-Time Notifications**: Instant updates delivered to student and worker dashboards.
+
+---
+
+## 🏗️ Microservices Architecture
+
+CampuSync implements a strict **Database-per-Service Architecture** inside Docker containers, managed via `docker-compose`.
 
 ```text
-📦 CampuSync
-├── 🔐 auth-service
-│   └── Firebase Authentication, JWT & RBAC
-
-├── ⚡ complaint-service
-│   └── Complaint Management & Kafka Producer
-
-├── 🤖 lost-found-service
-│   └── AI Image Matching & Gemini Integration
-
-├── 📢 notification-service
-│   └── Kafka Consumer & Real-Time Alerts
-
-├── 🎨 frontend
-│   └── React + Vite Single Page Application
-
-└── 🐳 docker-compose.yml
-    └── Multi-Container Orchestration
+📦 CampuSync Ecosystem
+├── 🌐 Nginx Reverse Proxy (Ports 80 / 443 SSL/TLS)
+│   └── Certificate mounting, HTTPS redirection & API routing
+│
+├── 🎨 Frontend Service (React 18 + Vite)
+│   └── Ocean Glassmorphism UI, Responsive Mobile Bottom Navigation
+│
+├── 🔐 Auth Microservice (FastAPI - Port 8081)
+│   ├── Database: hostelhub_auth (PostgreSQL)
+│   └── Profile sync, gender & student type tracking, RBAC role management
+│
+├── ⚡ Complaint Microservice (FastAPI - Port 8082)
+│   ├── Database: hostelhub_complaint (PostgreSQL)
+│   └── Complaint engine, capacity-aware worker dispatcher, Kafka producer
+│
+├── 🤖 Lost & Found Microservice (FastAPI - Port 8083)
+│   ├── Database: hostelhub_lostfound (PostgreSQL)
+│   └── Gemini Vision AI tagger, location context & gender filter engine
+│
+├── 📢 Notification Microservice (FastAPI - Port 8084)
+│   ├── Database: hostelhub_notifications (PostgreSQL)
+│   └── Apache Kafka Consumer & real-time notification broadcaster
+│
+└── 🐘 Infrastructure Containers
+    ├── PostgreSQL (Multi-database container)
+    └── Apache Kafka & Zookeeper Cluster
 ```
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-| Layer             | Technologies             |
-| ----------------- | ------------------------ |
-| 🎨 Frontend       | React.js, Vite, CSS      |
-| ⚙️ Backend        | Python, Flask, REST APIs |
-| 🗄️ Database      | PostgreSQL               |
-| 🔐 Authentication | Firebase Admin SDK, JWT  |
-| 📢 Messaging      | Apache Kafka             |
-| 🐳 Deployment     | Docker, Docker Compose   |
-| 🤖 AI Integration | Google Gemini Vision     |
-
----
-
-# 🎯 Engineering Concepts Demonstrated
-
-✅ Microservices Architecture
-
-✅ Python Based Algorith
-
-✅ Event-Driven Communication
-
-✅ REST API Development
-
-✅ Authentication & Authorization
-
-✅ AI Integration
-
-✅ Database Design
-
-✅ Full-Stack Development
-
-✅ Dockerized Deployment
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend UI** | React 18, Vite, Vanilla CSS (Custom Ocean Glassmorphism), Context API, Axios |
+| **Backend API** | Python 3.10+, **FastAPI**, Uvicorn, Pydantic v2, SQLAlchemy 2.0 |
+| **Databases** | PostgreSQL (4 isolated databases per microservice) |
+| **Authentication** | Firebase Admin SDK, JWT Token Interceptors, Role-Based Access Control |
+| **AI / Computer Vision**| Google Gemini 1.5 Vision API |
+| **Message Broker** | Apache Kafka, Zookeeper |
+| **DevOps & Proxy** | Docker, Docker Compose, Nginx, Let's Encrypt SSL/TLS, DuckDNS |
 
 ---
 
-# 📸 Screenshots
+## 🖼️ Dashboard Showcase & User Experiences
 
-### 🔐 Login Screen
+### 👨‍💼 1. Admin Dashboard
+> Provides system-wide user role management (Promote/Demote between Student, Worker, and Admin), real-time service health telemetry, and global complaint metrics.
 
 <p align="center">
-  <img src="screenshots/login.png" width="800">
+  <img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
 </p>
-
-### 🎓 User Dashboard
-
-<p align="center">
-  <img src="screenshots/dashboard.png" width="800">
-</p>
-
-> Replace the image paths above with your actual screenshots.
 
 ---
 
-# 👨‍💻 Developer
+### 🎓 2. Student Dashboard
+> Allows students to file complaints, report lost & found items with location context, filter items by gender & campus area, and safely contact item finders.
 
-**Yashvanth Balaji**
+<p align="center">
+  <img src="screenshots/student_dashboard.png" alt="Student Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</p>
 
-💻 Python Full Stack Developer
+---
 
-⚡Python • Microservices • Flask • React • PostgreSQL • Kafka • Firebase
+### 🛠️ 3. Worker Dashboard
+> Dedicated maintenance console for technicians to view assigned complaints based on work category specialization, monitor workload limits, and update task progress.
+
+<p align="center">
+  <img src="screenshots/worker_dashboard.png" alt="Worker Dashboard" width="950" style="border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</p>
+
+---
+
+## 🚦 Local Setup & Deployment Guide
+
+### Prerequisites
+- Docker Engine & Docker Compose
+- Firebase Project Credentials (`firebase-service-account.json`)
+- Google Gemini API Key
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yashvanthbalaji/campusync-python-fullstack.git
+cd campusync-python-fullstack
+```
+
+### 2. Environment Configuration
+Create `.env` files in each service directory containing your database URLs, Firebase parameters, and Gemini API keys.
+
+### 3. Launch with Docker Compose
+```bash
+docker compose up -d --build
+```
+
+### 4. Access the Microservices
+- **Frontend App**: `http://localhost` or `https://campusync.duckdns.org`
+- **Auth Service**: `http://localhost:8081/docs`
+- **Complaint Service**: `http://localhost:8082/docs`
+- **Lost & Found Service**: `http://localhost:8083/docs`
+- **Notification Service**: `http://localhost:8084/docs`
+
+---
+
+## 👨‍💻 Developer & Author
+
+**Yashvanth Balaji**  
+*Python Full-Stack & Microservices Engineer*  
+💻 Python • FastAPI • React • PostgreSQL • Kafka • Firebase • Docker • Cloud Architecture
 
 ---
 
 <div align="center">
 
-### ⭐ If you found this project interesting, consider giving it a star!
+### ⭐ Star this repository if you find it helpful!
 
-🚀 Building scalable systems, one microservice at a time.
+*Building high-performance, event-driven microservices for smart campuses.*
 
 </div>
