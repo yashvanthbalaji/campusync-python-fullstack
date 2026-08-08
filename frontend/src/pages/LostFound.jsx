@@ -601,26 +601,48 @@ export default function LostFound() {
                   </button>
                 )}
 
-                {/* Mark as Returned — reporter's own items */}
-                {currentUserEmail && item.reporterEmail === currentUserEmail &&
-                  item.itemStatus !== 'RESOLVED' && item.matchStatus !== 'CONFIRMED' && (
-                  <button
-                    onClick={e => { e.stopPropagation(); handleMarkReturned(item.id); }}
-                    style={{
-                      width:'100%', marginTop:8,
-                      background:'rgba(16,185,129,0.12)',
-                      border:'1px solid rgba(16,185,129,0.35)',
-                      borderRadius:10, padding:'8px 12px',
-                      color:'#10B981',
-                      fontFamily:"'Plus Jakarta Sans',sans-serif",
-                      fontWeight:600, fontSize:'0.82rem',
-                      cursor:'pointer', transition:'background 0.2s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background='rgba(16,185,129,0.22)'}
-                    onMouseLeave={e => e.currentTarget.style.background='rgba(16,185,129,0.12)'}
-                  >
-                    🏠 Mark as Returned
-                  </button>
+                {/* Mark as Returned (reporter's own item) or Claim button (others' items) */}
+                {item.itemStatus !== 'RESOLVED' && item.matchStatus !== 'CONFIRMED' && (
+                  item.reporterEmail === currentUserEmail ? (
+                    <button
+                      onClick={e => { e.stopPropagation(); handleMarkReturned(item.id); }}
+                      style={{
+                        width:'100%', marginTop:8,
+                        background:'rgba(16,185,129,0.12)',
+                        border:'1px solid rgba(16,185,129,0.35)',
+                        borderRadius:10, padding:'8px 12px',
+                        color:'#10B981',
+                        fontFamily:"'Plus Jakarta Sans',sans-serif",
+                        fontWeight:600, fontSize:'0.82rem',
+                        cursor:'pointer', transition:'background 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background='rgba(16,185,129,0.22)'}
+                      onMouseLeave={e => e.currentTarget.style.background='rgba(16,185,129,0.12)'}
+                    >
+                      🏠 Mark as Returned
+                    </button>
+                  ) : (
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        alert(`Contact: ${item.reporterPhone || 'Visit campus office'} to claim this item`);
+                      }}
+                      style={{
+                        width:'100%', marginTop:8,
+                        background:'rgba(0,212,255,0.12)',
+                        border:'1px solid rgba(0,212,255,0.35)',
+                        borderRadius:10, padding:'8px 12px',
+                        color:'#00D4FF',
+                        fontFamily:"'Plus Jakarta Sans',sans-serif",
+                        fontWeight:600, fontSize:'0.82rem',
+                        cursor:'pointer', transition:'background 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background='rgba(0,212,255,0.22)'}
+                      onMouseLeave={e => e.currentTarget.style.background='rgba(0,212,255,0.12)'}
+                    >
+                      I think this is mine! 📞
+                    </button>
+                  )
                 )}
 
                 {/* Confirm Returned — matched items */}
