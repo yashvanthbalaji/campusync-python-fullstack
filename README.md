@@ -7,7 +7,7 @@
 ### 🚀 Next-Gen Campus & Hostel Management Platform built with FastAPI, React 18, PostgreSQL, Firebase Auth, Apache Kafka & Docker
 
 <p>
-  <a href="https://campusync.duckdns.org/"><img src="https://img.shields.io/badge/Live_Production-https%3A%2F%2Fcampusync.duckdns.org-00F5A0?style=for-the-badge&logo=nginx&logoColor=white"></a>
+  <a href="https://campusync.tech/"><img src="https://img.shields.io/badge/Live_Production-https%3A%2F%2Fcampusync.tech-00F5A0?style=for-the-badge&logo=nginx&logoColor=white"></a>
   <img src="https://img.shields.io/badge/SSL%2FTLS-HTTPS_Secure-00D4FF?style=for-the-badge&logo=letsencrypt&logoColor=white">
   <img src="https://img.shields.io/badge/Python-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white">
   <img src="https://img.shields.io/badge/React_18-Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black">
@@ -26,7 +26,7 @@
 
 **CampuSync** is an enterprise-grade **Campus & Hostel Management Ecosystem** engineered using a decoupled **FastAPI Microservices Architecture**. It digitizes hostel complaints, automates maintenance worker job allocation, provides an AI-vision-powered Lost & Found engine, and enforces gender-segregated privacy filters for hostel residents.
 
-🔒 **Live Production Site**: [https://campusync.duckdns.org](https://campusync.duckdns.org) *(Secured with HTTPS & Nginx Reverse Proxy)*
+🔒 **Live Production Site**: [https://campusync.tech](https://campusync.tech) *(Secured with HTTPS & Nginx Reverse Proxy)*
 
 ---
 
@@ -169,7 +169,7 @@ docker compose up -d --build
 ```
 
 ### 4. Access the Microservices
-- **Frontend App**: `http://localhost` or `https://campusync.duckdns.org`
+- **Frontend App**: `http://localhost` or `https://campusync.tech`
 - **Auth Service**: `http://localhost:8081/docs`
 - **Complaint Service**: `http://localhost:8082/docs`
 - **Lost & Found Service**: `http://localhost:8083/docs`
