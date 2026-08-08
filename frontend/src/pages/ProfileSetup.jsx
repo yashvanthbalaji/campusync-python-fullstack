@@ -33,6 +33,7 @@ export default function ProfileSetup() {
   const [studentType, setStudentType] = useState(localStorage.getItem('studentType') || 'COLLEGE');
   const [year, setYear] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
+  const [gender, setGender] = useState('');
 
   // ── Worker state ──
   const [workerName, setWorkerName] = useState(localStorage.getItem('userName') || '');
@@ -53,7 +54,8 @@ export default function ProfileSetup() {
   const handleStudentSubmit = async () => {
     setError('');
     if (!studentName.trim()) { setError('Please enter your full name'); return; }
-    
+    if (!gender) { setError('Please select your gender'); return; }
+
     if (studentType === 'HOSTEL') {
       if (!year) { setError('Please select your year of study'); return; }
       if (!roomNumber || roomNumber.length !== 3 || isNaN(roomNumber)) {
@@ -73,7 +75,8 @@ export default function ProfileSetup() {
           phoneNumber: localStorage.getItem('userPhone') || '',
           roomNumber: savedRoomNumber,
           year: savedYear,
-          studentType: studentType
+          studentType: studentType,
+          gender: gender
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,6 +85,7 @@ export default function ProfileSetup() {
     localStorage.setItem('userRoom', savedRoomNumber);
     localStorage.setItem('userYear', savedYear);
     localStorage.setItem('studentType', studentType);
+    localStorage.setItem('userGender', gender);
     saveProfile(savedYear, savedRoomNumber);
     localStorage.setItem('profileComplete', 'true');
     navigate('/dashboard');
@@ -365,6 +369,49 @@ export default function ProfileSetup() {
                 />
               </>
             )}
+
+            {/* ── Gender Selector ── */}
+            <div style={{ marginBottom: 20 }}>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: 12, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: '0.8rem' }}>
+                👤 I am a:
+              </p>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setGender('MALE')}
+                  style={{
+                    flex: 1,
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    border: gender === 'MALE' ? '2px solid #667eea' : '2px solid transparent',
+                    background: gender === 'MALE' ? 'rgba(102,126,234,0.2)' : 'rgba(255,255,255,0.05)',
+                    color: 'white', cursor: 'pointer',
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontWeight: 600, fontSize: '0.9rem',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  👦 Male
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGender('FEMALE')}
+                  style={{
+                    flex: 1,
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    border: gender === 'FEMALE' ? '2px solid #f093fb' : '2px solid transparent',
+                    background: gender === 'FEMALE' ? 'rgba(240,147,251,0.2)' : 'rgba(255,255,255,0.05)',
+                    color: 'white', cursor: 'pointer',
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontWeight: 600, fontSize: '0.9rem',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  👧 Female
+                </button>
+              </div>
+            </div>
 
             <button
               style={s.submitBtn}
