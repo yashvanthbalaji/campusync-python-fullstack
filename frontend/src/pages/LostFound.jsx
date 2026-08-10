@@ -157,11 +157,11 @@ export default function LostFound() {
 
   // ── Submit new item (multipart/form-data) ──────────────────────
   const submitItem = async () => {
-    if (!form.itemName) { alert('Please enter the item name'); return; }
+    if (!form.itemName.trim()) { showToast('Please enter the item name', false); return; }
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append('itemName', form.itemName);
+      formData.append('itemName', form.itemName.trim());
       // Description prefix uses reportLocation, not studentType
       const descriptionWithClass = reportLocation === 'COLLEGE' && classroomNumber.trim()
         ? `Class: ${classroomNumber.trim()} - ${form.description}`
@@ -184,9 +184,12 @@ export default function LostFound() {
       setClassroomNumber('');
       setReportLocation(studentType || 'HOSTEL'); // reset to user's own type
       setSelectedImage(null); setImagePreview(null);
+      showToast('Item reported successfully! ✅');
       fetchItems();
-    } catch { alert('Failed to submit. Please try again.'); }
-    finally { setLoading(false); }
+    } catch (err) {
+      const detail = err?.response?.data?.detail || err?.message || 'Unknown error';
+      showToast(`Failed to submit: ${detail}`, false);
+    } finally { setLoading(false); }
   };
 
   // ── Confirm returned ───────────────────────────────────────────
@@ -322,7 +325,7 @@ export default function LostFound() {
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg-gradient)', backgroundAttachment:'fixed', paddingBottom:100 }}>
+    <div style={{ minHeight:'100vh', background:'var(--bg-gradient)', paddingBottom:100 }}>
 
       {/* ── TOAST ── */}
       {toast && (
@@ -727,6 +730,7 @@ export default function LostFound() {
             onClick={e => e.stopPropagation()}
             style={{
               width:'100%', maxHeight:'88vh', overflowY:'auto',
+              WebkitOverflowScrolling:'touch',
               background:'rgba(13,13,43,0.97)', border:'1px solid var(--glass-border)',
               borderRadius:'24px 24px 0 0', backdropFilter:'blur(24px)',
               WebkitBackdropFilter:'blur(24px)', animation:'slideUp 0.35s ease both',
@@ -951,6 +955,7 @@ export default function LostFound() {
             onClick={e => e.stopPropagation()}
             style={{
               width:'100%', maxHeight:'88vh', overflowY:'auto',
+              WebkitOverflowScrolling:'touch',
               background:'rgba(13,13,43,0.97)', border:'1px solid var(--glass-border)',
               borderRadius:'24px 24px 0 0', backdropFilter:'blur(24px)',
               WebkitBackdropFilter:'blur(24px)', animation:'slideUp 0.35s ease both',
@@ -1076,6 +1081,7 @@ export default function LostFound() {
             onClick={e => e.stopPropagation()}
             style={{
               width:'100%', maxHeight:'92vh', overflowY:'auto',
+              WebkitOverflowScrolling:'touch',
               background:'rgba(10,10,35,0.98)',
               border:'1px solid var(--glass-border)',
               borderRadius:'24px 24px 0 0',
