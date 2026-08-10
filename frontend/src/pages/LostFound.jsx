@@ -174,7 +174,8 @@ export default function LostFound() {
       if (selectedImage) formData.append('image', selectedImage);
 
       await axios.post(`${API_BASE}`, formData, {
-        headers: { ...(await getAuthHeaders()), 'Content-Type': 'multipart/form-data' },
+        // Do NOT set Content-Type manually — browser must auto-set it with the correct boundary
+        headers: await getAuthHeaders(),
       });
       setShowForm(false);
       setForm({ itemName:'', description:'', type:'LOST', priority:'MEDIUM',
@@ -817,11 +818,15 @@ export default function LostFound() {
                 </button>
               </div>
 
-              <label style={labelStyle}>📍 Location Category</label>
-              <select style={selectStyle} value={form.locationCategory} onChange={e => setForm({...form,locationCategory:e.target.value})} onFocus={focus} onBlur={blur}>
-                {(reportLocation === 'COLLEGE' ? COLLEGE_LOCATION_CATEGORIES : LOCATION_CATEGORIES)
-                  .map(lc => <option key={lc.value} value={lc.value}>{lc.label}</option>)}
-              </select>
+              {/* Location Category — only shown for HOSTEL, not needed for College */}
+              {reportLocation !== 'COLLEGE' && (
+                <>
+                  <label style={labelStyle}>📍 Location Category</label>
+                  <select style={selectStyle} value={form.locationCategory} onChange={e => setForm({...form,locationCategory:e.target.value})} onFocus={focus} onBlur={blur}>
+                    {LOCATION_CATEGORIES.map(lc => <option key={lc.value} value={lc.value}>{lc.label}</option>)}
+                  </select>
+                </>
+              )}
 
               <label style={labelStyle}>🏢 Floor Number</label>
               <select style={selectStyle} value={form.locationFloor} onChange={e => setForm({...form,locationFloor:e.target.value})} onFocus={focus} onBlur={blur}>

@@ -47,7 +47,18 @@ export default function Login() {
         navigate(hasProfile ? '/dashboard' : '/profile-setup');
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Check credentials.');
+      // Map Firebase error codes to friendly messages
+      const code = err?.code || '';
+      const friendlyErrors = {
+        'auth/invalid-credential':    'Incorrect email or password. Please try again.',
+        'auth/wrong-password':        'Incorrect password. Please try again.',
+        'auth/user-not-found':        'No account found with this email. Please register first.',
+        'auth/invalid-email':         'Please enter a valid email address.',
+        'auth/user-disabled':         'This account has been disabled. Contact support.',
+        'auth/too-many-requests':     'Too many failed attempts. Please wait a moment and try again.',
+        'auth/network-request-failed':'Network error. Please check your connection and try again.',
+      };
+      setError(friendlyErrors[code] || 'Login failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
