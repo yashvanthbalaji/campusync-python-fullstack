@@ -184,7 +184,8 @@ export default function Complaints() {
       });
 
       await axios.post(`${API}/api/complaints/raise`, fd, {
-        headers: { ...authHeaders, 'Content-Type':'multipart/form-data' },
+        // Do NOT set Content-Type manually — browser must auto-set it with the correct boundary
+        headers: authHeaders,
         timeout: 30000,
       });
       showToast('Complaint submitted! Your complaint will be routed to the right worker 📋');

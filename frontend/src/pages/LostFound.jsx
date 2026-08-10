@@ -58,7 +58,8 @@ const COLLEGE_FLOOR_OPTIONS = [
 ];
 
 export default function LostFound() {
-  const { roomNumber, email: currentUserEmail, studentType } = useAuth();
+  const { roomNumber, email: currentUserEmail, studentType, gender: authGender } = useAuth();
+  const userGender = authGender || localStorage.getItem('userGender') || '';
   const { isDark, toggleTheme } = useTheme();
   const [items, setItems]       = useState([]);
   const [showDetailModal, setShowDetailModal] = useState(false);
